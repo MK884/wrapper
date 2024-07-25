@@ -1,0 +1,28 @@
+@import '../mixin';
+
+.button {
+    @include button();
+    &-fullWidth {
+        width: -webkit-fill-available;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+
+    &-danger {
+        background-color: var(--background-error-weak);
+        color: var(--icon-danger);
+        border-color: var(--border-danger-strong);
+    }
+    &-success {
+        background-color: var(--background-success-weak);
+        color: var(--icon-success);
+        border-color: var(--border-success-strong);
+    }
+    &-warning {
+        background-color: var(--background-warning-weak);
+        color: var(--icon-warning);
+        border-color: var(--border-warning-strong);
+    }
+}

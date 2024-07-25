@@ -1,0 +1,27 @@
+@import './colors';
+
+*{
+    box-sizing: border-box;
+    margin: 0%;
+    padding: 0%;
+    user-select: none !important;
+}
+body {
+    color: var(--text-default);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.divider {
+    width: 100%;
+    padding: 10px 0;
+  }
+  .divider .line {
+    width: 100%;
+    border: 0 solid rgba(205, 205, 205, 1);
+    border-bottom-width: 0.7px;
+  }
+
+.error{
+  color: var(--text-danger);
+  font-size: smaller;
+}

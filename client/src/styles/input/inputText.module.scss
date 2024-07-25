@@ -1,0 +1,8 @@
+@import '../mixin';
+
+.textInput {
+    @include input();
+    &-fullWidth {
+        width: -webkit-fill-available;
+    }
+}

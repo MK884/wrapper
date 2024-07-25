@@ -1,0 +1,47 @@
+@import './colors';
+
+@mixin setSize($h, $w) {
+    height: $h;
+    width: $w;
+}
+
+@mixin input() {
+    border: 1px solid var(--border-default);
+    padding: 12px;
+    border-radius: 6px;
+    color: var(--text-medium);
+    &:focus {
+        outline: 1.5px solid #646cff;
+    }
+    background-color: var(--background-surface-layer-02);
+}
+
+@mixin button() {
+    border: 1px solid var(--border-default);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: border hover 0.2s linear;
+    border-radius: 6px;
+    font-size: default;
+    font-weight: 600;
+    color: #dadada;
+    background-color: var(--button-primary);
+    &:active {
+        border: 1.5px solid #646cff;
+    }
+    &:hover {
+        filter: brightness(118%);
+    }
+}
+
+@mixin container() {
+    background-color: var(--page-default);
+    padding: 12px 18px;
+    border: 1px solid var(--border-week);
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
+        drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+}

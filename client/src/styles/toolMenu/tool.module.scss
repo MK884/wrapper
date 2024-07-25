@@ -1,0 +1,84 @@
+@import '../mixin';
+.tool-wrapper{
+    height: 64px;
+    width: 64px;
+    .tool-header-wrapper{
+        height: 64px;
+        width: 64px;
+        display: flex;
+        align-items: center;
+    }
+    .tool-header{
+        @include setSize(34px, 34px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 6px;
+        
+        border: 1px solid var(--border-weak);
+        background-color: var(--background-defualt);
+        &:hover {
+            border: 1px solid var(--border-primary);
+        }
+        &:active {
+            opacity: 0.8;
+        }
+        
+    }
+    .tool-body{
+        direction: ltr;
+        transition: display 0.3s ease-in-out;
+        display: none;
+        margin-top: 5px;
+        height: auto;
+        border-radius: 8px;
+        min-width: 250px;
+        padding: 8px 6px;
+        border: 1px solid var(--border-weak);
+        background-color: var(--background-defualt);
+        &-active{
+            display: block;
+        }
+        li{
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            &.li-hover:hover {
+                color: var(--text-defualt);
+                background-color: var(--bg-tool-active);
+                .indicator {
+                    color: var(--text-defualt);
+                }
+            }
+            &.li-active{
+                background-color: var(--bg-tool-active);
+                color:#dadada
+            }
+            .info{
+
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+                background-color: var(--background-medium);
+                color: var(--text-medium);
+                .label {
+                    max-width: 180px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+            }
+            .indicator {
+                font-size: smaller;
+                color: var(--text-placeholder);
+            }
+
+        }
+    }
+    
+}
