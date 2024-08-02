@@ -104,11 +104,12 @@ const login = asyncHandler(async (req: CustomeRequest, res: Response) => {
 
     const userDB = await User.findOne({ email });
 
-    if (!userDB)
+    if (!userDB) {
         throw new ApiError(
             404,
             'This email does not exist, please try to register'
         );
+    }
 
     const validatePassword = await userDB?.isPasswordCorrect(password);
 
@@ -133,7 +134,7 @@ const login = asyncHandler(async (req: CustomeRequest, res: Response) => {
                 userDetails: {
                     accessToken,
                     email: userDB.email,
-                    avatar: userDB?.avatar ?? undefined,
+                    avatar: userDB?.avatar || undefined,
                     fullName: userDB?.fullName,
                 },
             })
@@ -162,47 +163,55 @@ const logout = asyncHandler(async (req: CustomeRequest, res: Response) => {
         .json(new ApiResponse(202, 'Successfully logged out'));
 });
 
-const refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
-    const incomingRefreshToken = req?.cookies?.refreshToken;
+const refreshAccessToken = asyncHandler(
+    async (req: CustomeRequest, res: Response) => {
+        const incomingRefreshToken = req.cookies?.refreshToken;
 
-    if (!incomingRefreshToken) throw new ApiError(401, 'Unautherized');
+        if (!incomingRefreshToken)
+            throw new ApiError(401, 'Unautherized Request from Server');
 
-    try {
-        const userClaims = jwt.verify(
-            incomingRefreshToken,
-            refreshTokenSecret
-        ) as JwtPayload;
+        try {
+            const userClaims = jwt.verify(
+                incomingRefreshToken,
+                refreshTokenSecret
+            ) as JwtPayload;
 
-        const user = await User.findById(userClaims._id);
+            const user = await User.findById(userClaims._id);
 
-        if (!user) throw new ApiError(404, 'User not found');
+            if (!user) throw new ApiError(404, 'User not found');
 
-        if (incomingRefreshToken !== user?.refreshToken)
-            throw new ApiError(403, 'Invalid refresh token');
+            if (incomingRefreshToken !== user?.refreshToken)
+                throw new ApiError(403, 'Invalid refresh token');
 
-        const accessToken = user?.generateAccessToken();
-        const refreshToken = user?.generateRefreshToken();
+            const accessToken = user?.generateAccessToken();
+            const refreshToken = user?.generateRefreshToken();
 
-        user.refreshToken = refreshToken;
+            user.refreshToken = refreshToken;
 
-        await user.save({ validateBeforeSave: false });
+            await user.save({ validateBeforeSave: false });
 
-        return res
-            .status(200)
-            .cookie('accessToken', accessToken, cookieOpt)
-            .cookie('refreshToken', refreshToken, cookieOpt)
-            .json(new ApiResponse(200, 'success', { accessToken }));
-    } catch (error) {
-        if(error instanceof TokenExpiredError){
-            return res.status(403).json(new ApiError(403, "Invalid Token", error))
+            return res
+                .status(200)
+                .cookie('accessToken', accessToken, cookieOpt)
+                .cookie('refreshToken', refreshToken, cookieOpt)
+                .json(new ApiResponse(200, 'success', { accessToken }));
+        } catch (error) {
+            if (error instanceof TokenExpiredError) {
+                return res
+                    .status(403)
+                    .json(new ApiError(403, 'Invalid Token', error));
+            }
+            return res.json(new ApiError(500, 'somthing went wrong'));
         }
-        return res.json(new ApiError(500, "somthing went wrong" ))
     }
-});
+);
 
 const updateAvatar = asyncHandler(
     async (req: CustomeRequest, res: Response) => {
         const newAvatarLocalPath = req?.file?.path;
+
+        console.log(newAvatarLocalPath);
+        
 
         if (!newAvatarLocalPath)
             throw new ApiError(404, 'New avatar not found');
@@ -244,8 +253,8 @@ const updateAvatar = asyncHandler(
 
 const updateUser = asyncHandler(async (req: CustomeRequest, res: Response) => {
     const { fullName, email } = req?.body;
-    if (!fullName || !email)
-        throw new ApiError(402, 'At least one field must be provided');
+    if (!(fullName || email))
+        throw new ApiError(400, 'At least one field must be provided');
 
     const updateUserDetails: { [key: string]: string } = {};
     if (email) updateUserDetails.email = email;
@@ -264,11 +273,30 @@ const updateUser = asyncHandler(async (req: CustomeRequest, res: Response) => {
     const user = {
         email: updatedUser?.email,
         fullName: updatedUser?.fullName,
-        avatar: updatedUser?.avatar,
     };
 
     return res.status(200).json(new ApiResponse(200, 'User updated', user));
 });
+
+
+const deleteUser = asyncHandler( async (req:CustomeRequest, res:Response) =>{
+    const UserId = req?.user?._id;
+    
+    const user = await User.findById(UserId);
+
+    if(!user) throw new ApiError(404, "No User to delete");
+
+    const deletedUser = await User.findByIdAndDelete(user?._id);
+
+    if(deleteUser === null) throw new ApiError(500,"DB Error");
+
+    await deleteSingleAsset(user?.avatar!);
+    
+    return res
+    .status(202)
+    .json(new ApiResponse(200, 'User deleted', deletedUser))
+
+})
 
 export {
     register,
@@ -277,4 +305,5 @@ export {
     refreshAccessToken,
     updateAvatar,
     updateUser,
+    deleteUser
 };

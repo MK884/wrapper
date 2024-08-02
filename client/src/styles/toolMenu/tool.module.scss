@@ -30,7 +30,7 @@
         direction: ltr;
         transition: display 0.3s ease-in-out;
         display: none;
-        margin-top: 5px;
+        margin-top: -6px;
         height: auto;
         border-radius: 8px;
         min-width: 250px;
@@ -40,45 +40,46 @@
         &-active{
             display: block;
         }
-        li{
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px;
-            border-radius: 4px;
-            cursor: pointer;
-            &.li-hover:hover {
-                color: var(--text-defualt);
-                background-color: var(--bg-tool-active);
-                .indicator {
-                    color: var(--text-defualt);
-                }
-            }
-            &.li-active{
-                background-color: var(--bg-tool-active);
-                color:#dadada
-            }
-            .info{
-
-                display: flex;
-                gap: 1rem;
-                align-items: center;
-                background-color: var(--background-medium);
-                color: var(--text-medium);
-                .label {
-                    max-width: 180px;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                }
-            }
-            .indicator {
-                font-size: smaller;
-                color: var(--text-placeholder);
-            }
-
-        }
+        
     }
     
+}
+li{
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    &.li-hover:hover {
+        color: var(--text-defualt);
+        background-color: var(--bg-tool-active);
+        .indicator {
+            color: var(--text-defualt);
+        }
+    }
+    &.li-active{
+        background-color: var(--bg-tool-active);
+        color:#dadada
+    }
+    .info{
+
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        background-color: var(--background-medium);
+        color: var(--text-medium);
+        .label {
+            max-width: 180px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+    .indicator {
+        font-size: smaller;
+        color: var(--text-placeholder);
+    }
+
 }

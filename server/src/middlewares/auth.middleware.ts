@@ -10,10 +10,7 @@ const accessTokenSecret =
 
 const jwtVerify = asyncHandler(
     (req: CustomeRequest, res: Response, next: NextFunction) => {
-        const cookie =
-            req.cookies?.accessToken ||
-            req.headers?.authorization ||
-            req?.headers?.Authorization;
+        const cookie =  req.headers?.Authorization || req?.headers?.authorization || req.cookies?.accessToken    
 
         const token = cookie?.replace('Bearer ', '');
 
@@ -21,7 +18,7 @@ const jwtVerify = asyncHandler(
 
         try {
             const user = jwt.verify(token, accessTokenSecret) as JwtPayload;
-
+            
             if (!user) throw new ApiError(403, 'Invalid Access Token');
 
             req.user = user as userToken;

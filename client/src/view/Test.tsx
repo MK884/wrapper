@@ -2,7 +2,7 @@ import Button from '../ui/Button';
 import Avatar, { AvatarGroup } from '../ui/Avatar';
 import Switch from '../ui/Switch';
 import TextInput from '../ui/TextInput';
-import { FaRegTrashAlt } from 'react-icons/fa';
+
 import ToolMenu from '../ui/ToolMenuWrapper';
 import MainMenu from '../components/MainMenu';
 

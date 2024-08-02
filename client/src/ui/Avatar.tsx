@@ -25,15 +25,17 @@ const Avatar = ({
     size = 'md',
     styles = {},
     onClick,
+    className='',
     string = 'Test',
 }: AvatarProps) => {
     return (
         <div
             onClick={onClick}
-            className={`${style['avatar']} ${style[`avatar-${size}`]} `}
+            className={`${style['avatar']} ${style[`avatar-${size}`]} ${className}`}
+            style={styles}
         >
             {src ? (
-                <img src={src} alt={alt} style={styles} />
+                <img src={src} alt={alt}  />
             ) : (
                 string.toUpperCase().charAt(0)
             )}

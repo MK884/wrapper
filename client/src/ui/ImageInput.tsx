@@ -4,7 +4,7 @@ import style from '../styles/input/imageInput.module.scss';
 import { ImageInputProps } from 'interface';
 
 
-const ImageInput = ({label='Select Image', onFileSelected}:ImageInputProps) => {
+const ImageInput = ({label='Select Image', onFileSelected, styles={}, ...rest}:ImageInputProps) => {
     const [selectedImage, setSelecetdImage] = React.useState<string | null>(null);
 
     const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,7 +13,7 @@ const ImageInput = ({label='Select Image', onFileSelected}:ImageInputProps) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 setSelecetdImage(e?.target?.result as string);
-            };
+            };  
             reader.readAsDataURL(file);
             console.log("file loaded", file);
             
@@ -24,7 +24,7 @@ const ImageInput = ({label='Select Image', onFileSelected}:ImageInputProps) => {
     };
 
     return (
-        <div className={`${style['file-input']}`}>
+        <div className={`${style['file-input']}`} {...rest} style={styles}>
             {selectedImage ? (
                 <img
                     src={selectedImage}

@@ -3,7 +3,12 @@ import style from '../styles/getStart/login.module.scss';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, PasswordInput, TextInput } from 'ui';
+import { Button, PasswordInput, TextInput } from '../ui';
+import { login } from '../services/user';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAppDispatch } from '../app/hook';
+import { setUser } from '../features/auth/authSlice';
+import { toast } from 'react-toastify';
 
 const schema = z.object({
     email: z.string().email(),
@@ -13,12 +18,17 @@ const schema = z.object({
 type formField = z.infer<typeof schema>;
 
 const Login = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const dispatch = useAppDispatch();
+
+    const redirect_url = location?.state?.from?.pathname ?? '/';
+
     const {
         register,
         handleSubmit,
         setError,
-        reset,
-        formState: { errors, isSubmitting, isSubmitSuccessful },
+        formState: { errors, isSubmitting },
     } = useForm<formField>({
         defaultValues: {
             email: '',
@@ -29,18 +39,24 @@ const Login = () => {
 
     const handleUserInput: SubmitHandler<formField> = async (data) => {
         try {
-            await new Promise((resolve, reject) => setTimeout(resolve, 1000));
-            console.log(data);
-        } catch (error) {
-            if (error) {
-                setError('email', { message: 'Email is not found' });
+            const response = await login(data);
+
+            if (response?.userDetails) {
+                dispatch(setUser(response?.userDetails));
+                navigate(redirect_url, { replace: true });
+                toast.success("Login successful", {
+                    autoClose:1000,
+                })
+            } else {
+                console.error('user Details Not Found');
             }
+
+        } catch (error) {
+            if (error instanceof Error)
+                setError('root', { message: error?.message });
+
         }
     };
-
-    React.useEffect(() => {
-        reset();
-    }, [isSubmitSuccessful]);
 
     return (
         <div className={`${style['login-container']}`}>
@@ -49,6 +65,9 @@ const Login = () => {
                 className={`${style['form']}`}
                 onSubmit={handleSubmit(handleUserInput)}
             >
+                {errors?.root?.message && (
+                    <p className="error">{errors?.root?.message}</p>
+                )}
                 <TextInput
                     fullWidth
                     styles={{

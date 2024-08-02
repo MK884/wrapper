@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { CookieOptions, Request } from "express";
 
 
 export interface userToken {
@@ -11,16 +11,12 @@ export interface CustomeRequest extends Request {
     files?: {
         [fieldname: string]: Express.Multer.File[] ;
     };
-    user?:userToken
+    user?:any
 }
 
 
-interface cookieOptions {
-    httpOnly:boolean;
-    secure: boolean;
-}
-
-export const cookieOpt:cookieOptions = {
+export const cookieOpt:CookieOptions= {
     httpOnly:true,
-    secure:true
+    secure:true,
+    sameSite:'none',
 }

@@ -1,4 +1,4 @@
-import { MainMenu, ProfileMenu } from "components"
+import { MainMenu, ProfileMenu } from "../components"
 import styles from "../styles/layout/layout.module.scss"
 
 const Header = () => {

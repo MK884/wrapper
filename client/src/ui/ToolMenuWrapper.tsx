@@ -3,7 +3,7 @@ import style from '../styles/toolMenu/tool.module.scss';
 import { IoMenu } from 'react-icons/io5';
 import { ToolMenuWrapperProps, ToolOptionsProps } from 'interface';
 
-export const ToolOptions = ({
+export const ToolOptions = React.forwardRef(({
     label,
     Icon,
     styles = {},
@@ -12,13 +12,14 @@ export const ToolOptions = ({
     hoverEffect = true,
     active = false,
     onClick,
-}: ToolOptionsProps) => {
+}: ToolOptionsProps, ref?:any) => {
     return (
         <>
             <li
                 style={styles}
                 className={`${hoverEffect && style['li-hover']} ${active && style['li-active']}`}
                 onClick={onClick}
+                ref={ref}
             >
                 <div className={`${style['info']}`}>
                     {Icon && <Icon style={IconStyles} />}
@@ -30,22 +31,23 @@ export const ToolOptions = ({
             </li>
         </>
     );
-};
+});
 
 const ToolMenuWrapper = ({
     header,
     direction = 'ltr',
     children,
+    setIsMenuVisible,
+    isMenuVisible
 }: ToolMenuWrapperProps) => {
-    const [display, setDisplay] = React.useState(false);
     const bodyRef = useRef<HTMLDivElement>(null);
     const handleMenuClick = () => {
-        setDisplay((display) => (display ? false : true));
+        setIsMenuVisible((prev) => (prev ? false : true));
     };
 
     const handleMenuClickOutside = (e: Event) => {
         if (bodyRef?.current && !bodyRef?.current.contains(e.target as Node)) {
-            setDisplay(false);
+            setIsMenuVisible(false);
         }
     };
 
@@ -79,7 +81,7 @@ const ToolMenuWrapper = ({
 
                 {children && (
                     <ul
-                        className={`${style['tool-body']} ${display && style[`tool-body-active`]}`}
+                        className={`${style['tool-body']} ${isMenuVisible === true ? style[`tool-body-active`] : ''}`}
                     >
                         {children}
                     </ul>

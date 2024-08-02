@@ -3,20 +3,22 @@ import { MdOutlineRoundaboutRight } from 'react-icons/md';
 import { RiFindReplaceLine } from 'react-icons/ri';
 import { FaLink } from 'react-icons/fa6';
 import { MdOutlineDashboardCustomize } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
-import React from 'react';
-import { Divider, ToolMenuWrapper, ToolOptions } from 'ui';
+import { useLocation, useNavigate} from 'react-router-dom';
+import { Divider, ToolMenuWrapper, ToolOptions } from '../ui';
 import ThemeSwitch from './ThemeSwitch';
+import { VscGitPullRequestCreate } from "react-icons/vsc";
+import React from 'react';
+
 
 const MainMenuData = [
     {
         label: 'Dashboard',
         icon: MdOutlineDashboardCustomize,
-        path: '/home',
+        path: '/',
     },
     {
         label: 'Create New',
-        icon: FaLink,
+        icon: VscGitPullRequestCreate,
         path: '/create-new',
     },
     {
@@ -33,21 +35,25 @@ const MainMenuData = [
 
 const MainMenu = () => {
     const navigate = useNavigate();
-    const [selectedIndex, setSelectedIndex] = React.useState(0);
+    const location = useLocation();
+    const [ isMenuVisible, setIsMenuVisible ] = React.useState<boolean>(false);
+
+
+
     return (
         <div>
-            <ToolMenuWrapper>
+            <ToolMenuWrapper isMenuVisible={isMenuVisible} setIsMenuVisible={setIsMenuVisible}>
                 <ToolOptions label="Search" Icon={RiFindReplaceLine} />
                 {MainMenuData.map((item, idx) => (
                     <ToolOptions
                         label={item?.label}
                         onClick={() => {
-                            setSelectedIndex(idx);
                             navigate(item?.path);
+                            setIsMenuVisible(false)
                         }}
                         Icon={item?.icon}
                         key={idx}
-                        active={idx === selectedIndex}
+                        active={location.pathname === item?.path}
                     />
                 ))}
                 <Divider />

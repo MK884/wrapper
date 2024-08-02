@@ -1,0 +1,96 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    h1{
+        text-align: center;
+    }
+    color: var(--text-defualt);
+    padding: 10px;
+    .performance {
+        
+        padding: 5rem 15rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        min-width: 80%;
+    }
+    .top-project {
+        display: flex;
+        flex-direction: column;
+        width: 60%;
+        gap: 0.5rem;
+        h6 {
+            font-size: 1.5rem;
+        }
+
+        .card-container {
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            .card-data {
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+                gap: 1rem;
+            }
+            .card-tool {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 0.6rem;
+                .tool {
+                    padding: 6px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    border-radius: 6px;
+
+                    border: 1px solid var(--border-weak);
+                    background-color: var(--background-defualt);
+                    &:hover {
+                        border: 1px solid var(--border-primary);
+                    }
+                    &:active {
+                        opacity: 0.8;
+                    }
+                }
+                .click {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    font-size: smaller;
+                    flex-direction: row;
+                    border: 1px solid var(--border-success-weak);
+                    background-color: var(--background-success-weak);
+                    border-radius: 6px;
+                    padding: 4px 8px;
+                    color: var(--text-success);
+                }
+            }
+        }
+    }
+}
+.main{
+    position: relative;
+}
+
+.tool-options {
+    z-index: 999;
+    top: 3.5rem;
+    position: absolute;
+    right: 18px;
+    padding: 8px;
+    display: none;
+    border: 1px solid var(--border-weak);
+    background-color: var(--background-defualt);
+    height: auto;
+    min-width: 180px;
+}
+.tool-options.active{
+    display: block;
+}

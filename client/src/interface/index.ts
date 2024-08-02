@@ -1,3 +1,4 @@
+import { Dispatch, MouseEventHandler, SetStateAction } from 'react';
 import { IconType } from 'react-icons';
 
 export interface SwitchProps {
@@ -19,6 +20,15 @@ export interface TextInputProps {
     name?: string;
     [key: string]: any;
 }
+export interface TextTextAreaProps {
+    onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    placeholder?: string;
+    styles?: React.CSSProperties;
+    fullWidth?: boolean;
+    value?: string;
+    name?: string;
+    [key: string]: any;
+}
 
 export interface AvatarProps {
     src?: string;
@@ -27,6 +37,7 @@ export interface AvatarProps {
     size?: 'sm' | 'md' | 'lg';
     onClick?: () => void;
     string?: string;
+    className?:string,
 }
 
 export interface AvatarGrpProps {
@@ -62,10 +73,13 @@ export interface ToolMenuWrapperProps {
     header?: any;
     direction?: 'ltr' | 'rtl';
     children?: any;
+    setIsMenuVisible: Dispatch<React.SetStateAction<boolean>> 
+    isMenuVisible: boolean
 }
 
 export interface ImageInputProps {
     label?: string;
+    styles?:React.CSSProperties;
     onFileSelected?: (file: File | undefined) => void;
     [key:string]:any
 }

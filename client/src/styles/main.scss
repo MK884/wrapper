@@ -4,7 +4,7 @@
     box-sizing: border-box;
     margin: 0%;
     padding: 0%;
-    user-select: none !important;
+    user-select: none ;
 }
 body {
     color: var(--text-default);
@@ -24,4 +24,15 @@ body {
 .error{
   color: var(--text-danger);
   font-size: smaller;
+}
+
+::-webkit-scrollbar{
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--background-surface-layer-03);
+  border-radius: 12px;
 }

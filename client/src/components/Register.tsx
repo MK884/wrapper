@@ -3,15 +3,19 @@ import style from '../styles/getStart/register.module.scss';
 import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, ImageInput, PasswordInput, TextInput } from 'ui';
+import { Button, ImageInput, PasswordInput, TextInput } from '../ui';
+import { login, register as registerUser } from '../services/user';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../app/hook';
+import { setUser } from '../features/auth/authSlice';
+import { toast } from 'react-toastify';
 
 const schema = z.object({
-    username: z.string().min(3),
-    email: z.string().email(),
-    password: z.string().min(8),
-    image: z.instanceof(File).optional(),
+    fullName: z.string().min(3).trim(),
+    email: z.string().email().trim(),
+    password: z.string().min(8).trim(),
+    avatar: z.instanceof(File).optional(),
 });
-
 
 type formField = z.infer<typeof schema>;
 
@@ -22,42 +26,71 @@ const inoutStyle = {
 };
 
 const Register = () => {
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const {
         register,
         handleSubmit,
         setValue,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm<formField>({
         defaultValues: {
             email: '',
             password: '',
-            username: '',
+            fullName: '',
         },
         resolver: zodResolver(schema),
     });
 
     const handleRegister: SubmitHandler<formField> = async (data) => {
-        await new Promise((resolve, reject) => setTimeout(resolve, 2000));
-        console.log(data);
+        try {
+            const response = await registerUser(data);
+
+            console.log('register response => ', response);
+
+            const loginData = {
+                email: response?.email,
+                password: data?.password,
+            };
+            const loginResponse = await login(loginData);
+
+            console.log('login response => ', loginResponse);
+
+            dispatch(setUser(loginResponse?.userDetails));
+
+            navigate('/', { replace: true });
+
+            toast.success('Register successfully', {
+                autoClose: 1000,
+            });
+        } catch (error) {
+            if (error instanceof Error) {
+                setError('root', { message: error?.message });
+            }
+        }
     };
 
     return (
         <div className={`${style['register-container']}`}>
             <h1>Register</h1>
             <form onSubmit={handleSubmit(handleRegister)}>
+                {errors?.root?.message && (
+                    <p className="error">{errors?.root?.message}</p>
+                )}
                 <ImageInput
                     label="Profile Image"
-                    onFileSelected={(file) => setValue('image', file)}
+                    onFileSelected={(file) => setValue('avatar', file)}
                 />
                 <TextInput
                     fullWidth
                     styles={inoutStyle}
                     placeholder="Enter Full Name"
                     type="text"
-                    {...register('username')}
+                    {...register('fullName')}
                 />
-                {errors?.username?.message && (
-                    <p className="error">{errors?.username?.message}</p>
+                {errors?.fullName?.message && (
+                    <p className="error">{errors?.fullName?.message}</p>
                 )}
                 <TextInput
                     fullWidth

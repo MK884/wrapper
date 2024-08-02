@@ -1,15 +1,19 @@
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import styles from "../styles/layout/layout.module.scss"
+import { Modal } from '../ui';
 
 const Layout = () => {
     return (
+        <>
+        
         <div className={styles.layout}>
             <Header />
             <main>
                 <Outlet />
             </main>
         </div>
+        </>
     );
 };
 

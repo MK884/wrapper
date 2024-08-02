@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { login, register, logout, refreshAccessToken, updateUser, updateAvatar } from '../controllers';
+import { login, register, logout, refreshAccessToken, updateUser, updateAvatar, deleteUser } from '../controllers';
 import { jwtVerify, upload } from '../middlewares';
 
 const router = Router();
@@ -15,5 +15,6 @@ router
     .patch(jwtVerify, upload.single('avatar'), updateAvatar);
 
 router.route('/update-user').patch(jwtVerify, updateUser);
+router.route('/delete').delete(jwtVerify, deleteUser)
 
 export default router;
