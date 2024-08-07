@@ -6,37 +6,19 @@ import TextInput from '../ui/TextInput';
 import ToolMenu from '../ui/ToolMenuWrapper';
 import MainMenu from '../components/MainMenu';
 
-const avatars = [
-    {
-        src: '',
-        alt: '',
-        string: 'Khalid',
-    },
-    {
-        src: '',
-        alt: '',
-        string: 'Wasifur',
-    },
-    {
-        src: '',
-        alt: '',
-        string: 'Razi',
-    },
-    {
-        src: '',
-        alt: '',
-        string: 'Abdullah',
-    },
-];
+import style from "../styles/test.module.scss"
+import { BarLoader, ColorLoader, Loader } from '../ui';
 
 const Test = () => {
     return (
         <div
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-            }}
+            
+            className={style['test']}
         >
+          {/* <Loader /> */}
+          {/* <BarLoader /> */}
+          <ColorLoader />
+
             {/* <Switch /> */}
             {/* <TextInput placeholder="Enter your Name" type="text" />
             <Avatar
@@ -49,7 +31,7 @@ const Test = () => {
             <Button label="Test" Icon={FaRegTrashAlt} variant="danger" />
             <Button label="Test" Icon={FaRegTrashAlt} /> */}
             {/* <MainMenu /> */}
-            test
+  
         </div>
     );
 };

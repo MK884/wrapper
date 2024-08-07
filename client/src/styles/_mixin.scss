@@ -10,9 +10,11 @@
     padding: 12px;
     border-radius: 6px;
     color: var(--text-medium);
+
     &:focus {
         outline: 1.5px solid #646cff;
     }
+
     background-color: var(--background-surface-layer-02);
 }
 
@@ -30,9 +32,11 @@
     font-weight: 600;
     color: #dadada;
     background-color: var(--button-primary);
+
     &:active {
         border: 1.5px solid #646cff;
     }
+
     &:hover {
         filter: brightness(118%);
     }
@@ -42,6 +46,74 @@
     background-color: var(--page-default);
     padding: 12px 18px;
     border: 1px solid var(--border-week);
-    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
-        drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
 }
+
+// taken from boostrap => https://getbootstrap.com/docs/5.0/layout/breakpoints/
+$min-width: (
+    "sm": 576px,
+    "md": 768px,
+    "lg": 992px,
+    "xl": 1200px,
+    "xxl": 1400px,
+);
+
+$max-width: (
+    "xs": 575.98px,
+    "sm": 767.98px,
+    "md": 991.98px,
+    "lg": 1199.98px,
+    "xl": 1399.98px,
+);
+
+@mixin xs {
+    @media (max-width: map-get($max-width, "xs")) {
+        @content;
+    }
+}
+
+;
+
+
+
+@mixin sm {
+    @media ((min-width: map-get($min-width, "sm")) and (max-width: map-get($max-width, "sm"))) {
+        @content;
+    }
+}
+
+;
+
+
+
+@mixin md {
+    @media ((min-width: map-get($min-width, "md")) and (max-width: map-get($max-width, "md"))) {
+        @content;
+    }
+}
+
+;
+
+@mixin lg {
+    @media ((min-width: map-get($min-width, "lg")) and (max-width: map-get($max-width, "lg"))) {
+        @content;
+    }
+}
+
+;
+
+@mixin xl {
+    @media ((min-width: map-get($min-width, "xl")) and (max-width: map-get($max-width, "xl"))) {
+        @content;
+    }
+}
+
+;
+
+@mixin xxl {
+    @media ((min-width: map-get($min-width, "xxl"))) {
+        @content;
+    }
+}
+
+;

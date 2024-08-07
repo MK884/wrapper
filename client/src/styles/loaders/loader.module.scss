@@ -1,0 +1,107 @@
+.loader{
+    height: 2.5rem;
+    width: 2.5rem;
+    position: relative;
+    animation: spin 2s linear infinite;
+}
+.loader .circle{
+    position: absolute;
+    height: 1rem;
+    width: 1rem;
+    background-color: var(--background-surface-layer-03);
+    border-radius: 50%;
+    &:nth-child(1){
+        top: 0;
+        left: 0;
+    }
+    &:nth-child(2){
+        top: 0;
+        right: 0;
+    }
+    &:nth-child(3){
+        bottom: 0;
+        right: 0;
+    }
+    &:nth-child(4){
+        bottom: 0;
+        left: 0;
+    }
+}
+
+
+@keyframes spin {
+    0%{
+        transform: scale(1) rotate(0);
+    }
+    20%, 25%{
+        transform: scale(1.3) rotate(90deg);
+    }
+    40%,45%{
+        transform: scale(1) rotate(180deg);
+    }
+    70%,75%{
+        transform: scale(1.3) rotate(270deg);
+    }
+    95%,100%{
+        transform: scale(1) rotate(360deg);
+    }
+}
+
+
+
+.bar-loader{
+    display: flex;
+    align-items: center;
+}
+
+.bar-loader .bar{
+    display: inline-block;
+    height: 1.8rem;
+    width: .3rem;
+    background-color: var(--background-surface-layer-03);
+    animation: scale-up .8s linear infinite ;
+    border-radius: 10px;
+}
+
+.bar-loader .bar:nth-child(2){
+    margin: 0 3px;
+    height: 2.6rem;
+    animation-delay: .2s;
+}
+.bar-loader .bar:nth-child(3){
+    animation-delay: .4s;
+}
+
+
+@keyframes scale-up{
+    20%{
+        transform: scaleY(1.3) scaleX(1.3);
+    }
+    40%{
+        transform: scaleY(1) scaleX(1);
+    }
+}
+
+
+.color-loader{
+    height: 2.6rem;
+    width: 2.6rem;
+    border-radius: 50%;
+    animation: change-background 1s linear infinite alternate;
+}
+
+
+@keyframes change-background {
+    0%{
+        background-color: royalblue;
+        transform: scale(0.8);
+    }
+    50%{
+        background-color: rgb(226, 85, 85);
+        transform: scale(1);
+    }
+    100%{
+        background-color: aquamarine;
+        transform: scale(.8);
+    }
+}

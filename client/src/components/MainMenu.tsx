@@ -22,6 +22,11 @@ const MainMenuData = [
         path: '/create-new',
     },
     {
+        label: 'Short Link',
+        icon: VscGitPullRequestCreate,
+        path: '/sl',
+    },
+    {
         label: 'Help',
         icon: IoMdHelpCircleOutline,
         path: '/help',

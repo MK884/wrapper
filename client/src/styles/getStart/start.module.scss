@@ -1,6 +1,6 @@
 @import '../mixin';
 
-.start {
+.wrapper {
     display: flex;
     align-items: center;
     padding: 10rem 0 5rem 0;
@@ -47,5 +47,19 @@
         .body {
             padding: 8px;
         }
+    }
+}
+
+
+@include md{
+    .container{
+        width: 500px;
+       
+    }
+}
+@include lg{
+    .container{
+        width: 500px;
+        
     }
 }

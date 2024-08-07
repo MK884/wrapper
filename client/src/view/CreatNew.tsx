@@ -1,4 +1,3 @@
-import React from 'react';
 
 import style from '../styles/create-new/createNew.module.scss';
 import Container from '../ui/Container';
@@ -12,7 +11,7 @@ const CreatNew = () => {
           <h1>Create New Project</h1>
             <Container
                 className={style['project']}
-                onClick={() => navigate('/sl')}
+                onClick={() => navigate('/create-sl')}
             >
                 <div className={style['info']}>
                     <h4>Short Link</h4>

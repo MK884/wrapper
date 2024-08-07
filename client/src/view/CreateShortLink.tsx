@@ -7,27 +7,22 @@ import { FaRegImage } from 'react-icons/fa6';
 import { MdOutlineContentCopy } from 'react-icons/md';
 import { IoMdDoneAll } from 'react-icons/io';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import { getMetaData } from '../services/urls';
+import { getMetaData, getShortUrl } from '../services/urls';
 import { usePrivateAxios } from '../services/api';
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import config from '../config';
 
 
-const isValidUrl = (url: string): boolean => {
-    // taken from chatgpt https://chatgpt.com/share/09f9b7b1-dced-4f69-9e65-9e9399adf93b
-    // const regExForValidUrl = new RegExp(
-    //     '^https://(?!localhost)([a-zA-Z0-9-]+.)+[a-zA-Z]{2,}(/[^s]*)?$'
-    // );
-
+function isValidHttpsUrl(url:string) {
     try {
-        const regExForValidUrl = new RegExp(
-            '^https://(?!localhost)([a-zA-Z0-9-]+.)+[a-zA-Z]{2,}(/[^s]*)?$'
-        );
-
-        return regExForValidUrl.test(url);
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === 'https:' && (!parsedUrl.hostname.includes('localhost') && parsedUrl.hostname !== '127.0.0.1');
     } catch (error) {
-        return false;
+      return false;
     }
-};
+  }
 
 interface Formfields {
     title?: string;
@@ -37,8 +32,11 @@ interface Formfields {
     domain?: string;
 }
 
+let fetchData: { [key: string]: any } = {};
+
 const CreateShortLink = () => {
     const privateAxios = usePrivateAxios();
+    const navigate = useNavigate();
 
     const fileRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -48,7 +46,9 @@ const CreateShortLink = () => {
 
     const [originalUrlError, setOriginalUrlError] = React.useState<string>();
     const [originalUrl, setOriginalUrl] = React.useState<string>();
+    const [shortUrl, setShortUrl] = React.useState<string>();
     const [imageUrl, setImageUrl] = React.useState<string>();
+    const [imageFile, setImageFile] = React.useState<File>();
 
     const handleOriginalUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
         let url = e?.target?.value;
@@ -58,7 +58,7 @@ const CreateShortLink = () => {
         let trimeUrl = url?.trim();
 
         if (trimeUrl.length > 4) {
-            if (!isValidUrl(url)) {
+            if (!isValidHttpsUrl(url)) {
                 let error = !url.startsWith('https')
                     ? 'Url must start with https'
                     : url.includes('localhost')
@@ -72,11 +72,15 @@ const CreateShortLink = () => {
     React.useEffect(() => {
         const getMeta = async () => {
             if (!originalUrl || originalUrlError) return;
+            console.log(originalUrl === fetchData?.originalUrl)
+            if(fetchData?.originalUrl && originalUrl === fetchData?.originalUrl) return;
             console.log('fetch data');
 
             try {
                 const { data } = await getMetaData(originalUrl, privateAxios);
-                console.log(data);
+
+                setImageFile(undefined);
+                setImageUrl('');
 
                 let metaData = {
                     avatar: data?.domainIcon,
@@ -84,9 +88,13 @@ const CreateShortLink = () => {
                     image: data?.banner || data?.domainIcon,
                     title: data?.title,
                     domain: data?.domain,
+                    originalUrl: data?.originalUrl
                 };
+                console.log(metaData);
+                
+                fetchData = metaData;
 
-                setFormFields(metaData);
+                setFormFields(fetchData);
             } catch (error) {
                 console.error(error);
             }
@@ -95,7 +103,10 @@ const CreateShortLink = () => {
             getMeta();
         }, 2000);
 
-        return () => clearTimeout(getData);
+        return () => {
+            clearTimeout(getData);
+            fetchData = {}
+        };
     }, [originalUrl]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,23 +119,24 @@ const CreateShortLink = () => {
     };
 
     const setImage = (imagePath: string) => {
-        if (imagePath.length < 4) {
-            setFormFields((prev) => ({
-                ...prev,
-                image: "",
-            }));
-        } else {
+        if (imagePath.length > 4) {
+            clearImage();
             setFormFields((prev) => ({
                 ...prev,
                 image: imagePath,
             }));
+        } else {
+            clearImage();
         }
     };
 
     const handleImageUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let imageUrl = e?.target?.value;
-        setImageUrl(imageUrl);
-        setImage(imageUrl);
+        let targetImageUrl = e?.target?.value;
+        setImageUrl(targetImageUrl);
+        setImageFile(undefined)
+        if (isValidHttpsUrl(targetImageUrl)) {
+            setImage(targetImageUrl);
+        }
     };
 
     const handleImageFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,100 +145,61 @@ const CreateShortLink = () => {
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = () => [setImage(reader?.result as string)];
-
+        reader.onload = () => {
+            setImage(reader?.result as string);
+        };
+        setImageFile(file);
         reader.readAsDataURL(file);
     };
 
-    const clearImage = () =>{
-        setFormFields(prev=>({
+    const clearImage = () => {
+        setFormFields((prev) => ({
             ...prev,
-            image: ""
+            image: undefined,
         }));
-        setImageUrl("")
+    };
+
+    const handleClearImageClick = () =>{
+        setImageUrl("");
+        setImageFile(undefined);
+        clearImage();
     }
 
-    // const handleImageUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     let image = e.target.value;
-    //     setImageUrl(image);
-    //     setFormFields((prev) => ({
-    //         ...prev,
-    //         coverImage: image,
-    //     }));
-    //     if (e?.target?.value === '') {
-    //         setIsDisable(false);
-    //     } else {
-    //         setIsDisable(true);
-    //     }
-    // };
+    const submitData = async () => {
+        const Data: { [key: string]: any } = {};
 
-    // const handleCoverImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const file = e.target?.files?.[0];
-    //     if (file) {
-    //         const reader = new FileReader();
-    //         reader.onload = () => {
-    //             setFormFields((prev) => ({
-    //                 ...prev,
-    //                 coverImage: reader?.result as string,
-    //             }));
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    // };
+        Data.originalUrl = originalUrl;
 
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const { value, name } = e?.target;
+        if (
+            formFields?.title !== fetchData?.title ||
+            formFields?.description !== fetchData?.description ||
+            formFields?.image !== fetchData?.image
+        ) {
+            Data.title = formFields.title;
+            Data.description = formFields.description;
+            Data.image = formFields.image ?? fetchData.image;
+        }
 
-    //     setFormFields((prev) => ({
-    //         ...prev,
-    //         [name]: value,
-    //     }));
-    // };
+        if(imageFile) Data.imageFile = imageFile && imageFile
+        
+        // console.log(Data);
+        try {
+            const response = await getShortUrl(Data, privateAxios);
 
-    // const handleOriginalUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     setFormFields((prev) => ({
-    //         ...prev,
-    //         originalUrl: e?.target?.value,
-    //     }));
+            console.log(response?.data);
+            let shortUrl = `${config.appURL}/${response.data.shortUrl}`
 
-    //     const { error } = schema.safeParse(formFields);
+            setShortUrl(shortUrl);
 
-    //     setOriginalUrlError('');
-
-    //     if (error) {
-    //         let urlError = error?.formErrors?.fieldErrors?.originalUrl?.[0];
-    //         setOriginalUrlError(urlError || '');
-    //     }
-    // };
-
-    // const takeMetaData = async () => {
-    //     if (originalUrlError?.length) return;
-
-    //     let url = formFields?.originalUrl;
-
-    //     if (!url) return;
-
-    //     try {
-    //         const response = await getMetaData(url, privateAxios);
-    //         console.log(response);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
-
-    // const updatePreview = () => {
-    //     console.log('update preview');
-
-    //     if (formFields?.originalUrl?.includes('localhost')) {
-    //         setOriginalUrlError('Url can not contain localhost');
-    //         return;
-    //     }
-    //     if (originalUrlError?.length) return;
-
-    //     takeMetaData();
-    //     console.log(formFields);
-    // };
-
+            navigator.clipboard.writeText(shortUrl);
+            toast.success("Copied short url to clipboard",{ autoClose: 3000})
+            navigate(`/sl`, { replace: true });
+            
+        } catch (error) {
+            console.error(error);
+            
+        }
+    };
     return (
         <div className={style['main']}>
             <Button
@@ -248,7 +221,10 @@ const CreateShortLink = () => {
                     <div className={style['header']}>
                         <div className={style['icon']}>
                             {formFields?.avatar ? (
-                                <Avatar src={formFields?.avatar} />
+                                <Avatar src={formFields?.avatar} styles={{
+                                    background:'white',
+                                    border: 'none'
+                                }}/>
                             ) : (
                                 <CiGlobe size="1.4rem" />
                             )}
@@ -330,7 +306,7 @@ const CreateShortLink = () => {
                                 />
                             </div>
                         </div>
-                        {false && (
+                        {shortUrl && (
                             <div className={style['short-link']}>
                                 <h5>Your Short Link</h5>
                                 <TextInput
@@ -341,20 +317,20 @@ const CreateShortLink = () => {
                                     placeholder="short Link"
                                     readOnly
                                     name="shortUrl"
+                                    value={shortUrl}
                                 />
                                 <div
                                     className={style['tool']}
-                                    // onClick={() => {
-                                    //     setShowCopy(false);
-                                    //     navigator.clipboard.writeText(
-                                    //         formFields?.shortUrl as string
-                                    //     );
-
-                                    //     setTimeout(
-                                    //         () => setShowCopy(true),
-                                    //         1000
-                                    //     );
-                                    // }}
+                                    onClick={() => {
+                                        setShowCopy(false);
+                                        navigator.clipboard.writeText(
+                                            shortUrl
+                                        );
+                                        setTimeout(
+                                            () => setShowCopy(true),
+                                            1000
+                                        );
+                                    }}
                                 >
                                     {ShowCopy ? (
                                         <MdOutlineContentCopy />
@@ -367,7 +343,7 @@ const CreateShortLink = () => {
                         <Button
                             label="Generate Link"
                             fullWidth
-                            onclick={() => {}}
+                            onclick={submitData}
                             disabled={
                                 originalUrl && originalUrl?.length > 4
                                     ? false
@@ -385,13 +361,17 @@ const CreateShortLink = () => {
                         <div className={`${style['preview-image']}`}>
                             {formFields?.image ? (
                                 <>
-                                <img
-                                    src={formFields?.image}
-                                    alt="Cover Image"
-                                />
-                                <div className={style['cross-icon']} onClick={clearImage}>
-                                    <IoMdClose />
-                                </div>
+                                    <img
+                                        src={formFields?.image}
+                                        alt="Cover Image"
+                                    />
+                                    <div
+                                        className={style['cross-icon']}
+                                        onClick={handleClearImageClick}
+                                        title="clear image"
+                                    >
+                                        <IoMdClose size="1.2rem" />
+                                    </div>
                                 </>
                             ) : (
                                 <>

@@ -1,3 +1,5 @@
+@import '../colors';
+@import '../mixin';
 .home {
     display: flex;
     flex-direction: column;
@@ -5,78 +7,92 @@
     width: 100%;
     h1{
         text-align: center;
+        font-size: 2vmax;
     }
     color: var(--text-defualt);
     padding: 10px;
     .performance {
         
-        padding: 5rem 15rem;
+        padding: 5rem 8rem;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         min-width: 80%;
     }
+    h6 {
+        font-size: 1.2vmax;
+    }
     .top-project {
         display: flex;
         flex-direction: column;
-        width: 60%;
+        min-width: 50%;
         gap: 0.5rem;
-        h6 {
-            font-size: 1.5rem;
-        }
 
-        .card-container {
-            cursor: pointer;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            .card-data {
-                display: flex;
-                align-items: center;
-                flex-direction: row;
-                gap: 1rem;
-            }
-            .card-tool {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                gap: 0.6rem;
-                .tool {
-                    padding: 6px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    border-radius: 6px;
-
-                    border: 1px solid var(--border-weak);
-                    background-color: var(--background-defualt);
-                    &:hover {
-                        border: 1px solid var(--border-primary);
-                    }
-                    &:active {
-                        opacity: 0.8;
-                    }
-                }
-                .click {
-                    display: flex;
-                    align-items: center;
-                    gap: 5px;
-                    font-size: smaller;
-                    flex-direction: row;
-                    border: 1px solid var(--border-success-weak);
-                    background-color: var(--background-success-weak);
-                    border-radius: 6px;
-                    padding: 4px 8px;
-                    color: var(--text-success);
-                }
-            }
-        }
+        
     }
 }
 .main{
     position: relative;
+}
+
+.card-container {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .card-data {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        gap: 1rem;
+        .link-info{
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+            font-size: 1vmax;
+        }
+    }
+    .card-tool {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        white-space: no-wrap;
+        gap: 0.6rem;
+        .tool {
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+
+            border: 1px solid var(--border-weak);
+            background-color: var(--background-defualt);
+            &:hover {
+                border: 1px solid var(--border-primary);
+            }
+            &:active {
+                opacity: 0.8;
+            }
+        }
+        .click {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: .8vmax;
+            flex-direction: row;
+            border: 1px solid var(--border-success-weak);
+            background-color: var(--background-success-weak);
+            border-radius: 6px;
+            padding: 4px 8px;
+            color: var(--text-success);
+        }
+    }
+}
+.last-update{
+color: var(--text-placeholder);
+font-size: .8vmax;
 }
 
 .tool-options {
@@ -94,3 +110,51 @@
 .tool-options.active{
     display: block;
 }
+
+
+@include md{
+    .home{
+        .performance{
+            padding: 1rem;
+            flex-direction: column-reverse;
+            gap: 1rem;
+        }
+    }
+}
+@include sm{
+    .home{
+        .performance{
+            padding: 1rem;
+            flex-direction: column-reverse;
+            gap: 1rem;
+        }
+    }
+}
+@include xs{
+    .home{
+        .performance{
+            padding: 1rem;
+            flex-direction: column-reverse;
+            gap: 1rem;
+        }
+    }
+}
+@include lg{
+    .home{
+        .performance{
+            padding: 1rem;
+           
+            gap: 1rem;
+        }
+    }
+}
+@include xl{
+    .home{
+        .performance{
+            padding: 1rem;
+           
+            gap: 1rem;
+        }
+    }
+}
+

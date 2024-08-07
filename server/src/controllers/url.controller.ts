@@ -1,18 +1,27 @@
-import { Response } from 'express';
-import { CustomeRequest } from '../interface';
-import { ApiError, ApiResponse, asyncHandler } from '../utils';
-import { GOOGLE_FAVICON_URL } from '../constant';
+import { Request, Response } from 'express';
+import { CustomeRequest, DeviceType } from '../interface';
+import {
+    ApiError,
+    ApiResponse,
+    asyncHandler,
+    uploadOnCloudinary,
+} from '../utils';
+import { country, GOOGLE_FAVICON_URL } from '../constant';
 import parse from 'node-html-parser';
 import he from 'he';
+import { Static, Url } from '../models';
+import { UAParser } from 'ua-parser-js';
+import ejs from 'ejs'
 
 const isValidUrl = (url: string): boolean => {
-    if (url.includes('localhost')) return false;
-
-    if (!url.startsWith('https')) return false;
 
     try {
-        new URL(url);
-        return true;
+        let parseUrl = new URL(url);
+        return (
+            parseUrl?.protocol === 'https:' &&
+            !parseUrl.hostname.includes('localhost') &&
+            parseUrl.hostname !== '127.0.0.1'
+        );
     } catch (error) {
         return false;
     }
@@ -25,6 +34,8 @@ const getDomainOfUrl = (urlString: string) => {
         if (host === 'youtu.be') return 'youtube.com';
         if (host.endsWith('.vercel.app')) return 'vercel.app';
         if (host === 'raw.githubusercontent.com') return 'github.com';
+        if (host === 'images.unsplash.com') return 'unsplash.com';
+        if(host === 'projects.100xdevs.com') return '100xdevs.com'
         return host;
     } catch (error) {
         console.error(error);
@@ -44,9 +55,22 @@ const getReletaviePath = (url: string, imageUrl: string | undefined) => {
     return new URL(imageUrl, base_url).toString();
 };
 
+const generateShortUrl = (userId: string): string => {
+    let randomString = Math.random().toString(36).substring(2, 6);
+    let last4Digits = userId.slice(-4);
+    return randomString + last4Digits;
+};
+
+const getCountryNameByCode = (code:string):string =>{
+
+    let countryCode = code.toUpperCase();
+    const countryName = country[countryCode];
+
+    return countryName ? countryName : "Unknown Country"
+}
+
 const getMetaData = asyncHandler(async (req: CustomeRequest, res: Response) => {
     const { url } = req?.body;
-
 
     if (!url) throw new ApiError(400, 'URl not provided');
 
@@ -59,15 +83,13 @@ const getMetaData = asyncHandler(async (req: CustomeRequest, res: Response) => {
     const htmlContent = await response.text();
 
     if (!htmlContent) {
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(200, 'No html Found', {
-                    title: url,
-                    description: 'No description',
-                    image: null,
-                })
-            );
+        return res.status(200).json(
+            new ApiResponse(200, 'No html Found', {
+                title: url,
+                description: 'No description',
+                image: null,
+            })
+        );
     }
 
     const ast = parse(htmlContent);
@@ -82,8 +104,6 @@ const getMetaData = asyncHandler(async (req: CustomeRequest, res: Response) => {
         };
     });
 
-
-
     const titleTag = ast.querySelector('title')?.innerText;
 
     const linkTags = ast.querySelectorAll('link').map(({ attributes }) => {
@@ -91,8 +111,6 @@ const getMetaData = asyncHandler(async (req: CustomeRequest, res: Response) => {
 
         return { rel, href };
     });
-
-
 
     const MetaData: { [key: string]: any } = {};
 
@@ -114,11 +132,8 @@ const getMetaData = asyncHandler(async (req: CustomeRequest, res: Response) => {
 
     const domainIcon = `${GOOGLE_FAVICON_URL}${domain}`;
 
-    const title =
-        titleTag
-        MetaData['og:title'] ||
-        MetaData['title'] ||
-        MetaData['twitter:title'] 
+    const title = titleTag;
+    MetaData['og:title'] || MetaData['title'] || MetaData['twitter:title'];
 
     const description =
         MetaData['og:description'] ||
@@ -134,8 +149,6 @@ const getMetaData = asyncHandler(async (req: CustomeRequest, res: Response) => {
         MetaData['icon'] ||
         MetaData['shortcut icon'] ||
         MetaData['apple-touch-icon'];
-
- 
 
     const keywords = MetaData['og:keywords'] || MetaData['keywords'];
 
@@ -155,25 +168,192 @@ const getMetaData = asyncHandler(async (req: CustomeRequest, res: Response) => {
             keywords,
             originalUrl,
             siteName,
-            domain
+            domain,
         })
     );
 });
 
+const getShortLink = asyncHandler(
+    async (req: CustomeRequest, res: Response) => {
+        const { originalUrl, title, description, image } = req?.body;
+        const imageFileLocalPath = req?.file?.path;
 
-// {
-//     "statusCode": 200,
-//     "message": "Successfully fetched metaData",
-//     "data": {
-//         "domainIcon": "https://www.google.com/s2/favicons?sz=64&domain_url=hoppscotch.io",
-//         "title": "Hoppscotch • Open source API development ecosystem",
-//         "description": "Helps you create requests faster, saving precious time on development.",
-//         "banner": "https://hoppscotch.io/banner.png",
-//         "keywords": "hoppscotch, hopp scotch, hoppscotch online, hoppscotch app, postwoman, postwoman chrome, postwoman online, postwoman for mac, postwoman app, postwoman for windows, postwoman google chrome, postwoman chrome app, get postwoman, postwoman web, postwoman android, postwoman app for chrome, postwoman mobile app, postwoman web app, api, request, testing, tool, rest, websocket, sse, graphql, socketio",
-//         "originalUrl": "https://hoppscotch.io/",
-//         "siteName": "Hoppscotch"
-//     },
-//     "success": true
-// }
+        const user = req?.user;
+        const userId = user?._id;
 
-export { getMetaData };
+        if (!originalUrl || originalUrl === '')
+            throw new ApiError(404, 'Original url not provided');
+
+        if (!isValidUrl(originalUrl)) throw new ApiError(400, 'Invalid url');
+
+        const shortUrl = generateShortUrl(userId.toString());
+        // const base_url = `${req.protocol}://${req.get('host')}`;
+        // const fullShortUrl = `${base_url}/${shortUrl}`;
+
+        const domain = getDomainOfUrl(originalUrl);
+        const domainIcon = `${GOOGLE_FAVICON_URL}${domain}`;
+
+        const data: { [key: string]: any } = {};
+
+        if (!title) {
+            // there is no changes in preview
+
+            data.originalUrl = originalUrl;
+            data.shortUrl = shortUrl;
+            data.domain = domain;
+            data.domainIcon = domainIcon;
+            data.owner = userId;
+            try {
+                const response = await Url.create(data);
+
+                if (!response)
+                    throw new ApiError(500, 'not able to create shortUrl');
+
+                return res.status(200).json(
+                    new ApiResponse(200, 'Created ShortUrl', {
+                        shortUrl: shortUrl,
+                    })
+                );
+            } catch (error) {
+                throw new ApiError(500, 'Somthing wrong with mongoDb', error);
+            }
+        } else {
+            // here we have some changes in preview
+
+            data.owner = userId;
+            data.originalUrl = originalUrl;
+            data.shortUrl = shortUrl;
+            data.domain = domain;
+            data.domainIcon = domainIcon;
+            data.isCustomized = true;
+            data.title = title;
+            data.description = description;
+
+            // check if user give url or upload the image for banner
+            if (imageFileLocalPath) {
+                let publicUrl = await uploadOnCloudinary(imageFileLocalPath);
+                if (!publicUrl)
+                    throw new ApiError(
+                        500,
+                        'Somthing wrong with uploading on cloudinary'
+                    );
+                data.image = publicUrl?.url;
+            } else {
+                if (isValidUrl(image)) {
+                    data.image = image;
+                } else {
+                    throw new ApiError(405, 'Image url is not valid', image);
+                }
+            }
+
+            try {
+                const response = await Url.create(data);
+
+                if (!response)
+                    throw new ApiError(500, 'not able to create shortUrl');
+
+                return res.status(200).json(
+                    new ApiResponse(200, 'Created ShortUrl', {
+                        shortUrl: shortUrl,
+                    })
+                );
+            } catch (error) {
+                console.error(error);
+
+                throw new ApiError(500, 'Somthing wrong with mongoDb', error);
+            }
+        }
+    }
+);
+
+const shortUrl = asyncHandler(async (req: Request, res: Response) => {
+    const { shortUrl } = req?.query;
+
+    if (!shortUrl)
+        return res
+            .status(404)
+            .json(new ApiError(404, 'shortUrl not speciefied'));
+
+    const result = await Url.findOne({ shortUrl });
+
+    if (!result) return res.sendStatus(404);
+
+    const clientIp =
+        req.headers['x-real-ip'] ||
+        req.headers['x-forwarded-for'] ||
+        req.socket.remoteAddress ||
+        req.ip;
+
+    console.log("IP => ", clientIp);
+    
+
+    const uaParser = new UAParser();
+    const parser = uaParser.getDevice();
+    const clientDevice: DeviceType = (parser.type as DeviceType) || 'desktop';
+
+    let ipInfo;
+
+    // TODO: clear comments whenever project ready to use in production, for development use dumy data
+    // try {
+    //     ipInfo = await axios.get(
+    //         `https://ipinfo.io/?token=${process.env.IPINFO_API_KEY}`
+    //     );
+    //     console.log(ipInfo);
+        
+    // } catch (error) {
+    //     console.error(error);
+    // }
+
+    // // just setting empty if not found to avoid any error
+    // const clientCity = ipInfo?.data?.city ?? '';
+    // const clientRegion = ipInfo?.data?.region ?? '';
+    // const clientCountryCode = ipInfo?.data?.country ?? ''; //here we get only country code need to convert it into full name;
+    // const clientCountryName = getCountryNameByCode(clientCountryCode);
+    
+    const clientCity = 'Mumbai';
+    const clientRegion = 'Maharashtra';
+    const clientCountryCode = 'IN'; 
+    const clientCountryName = getCountryNameByCode(clientCountryCode);
+
+    try {
+        await Static.create({
+            projectId: result._id,
+            projectType: "Url",
+            city: clientCity,
+            region: clientRegion,
+            country: clientCountryName,
+            device: clientDevice
+        })
+        
+    } catch (error) {
+        console.error(error);
+        
+    }
+
+    if (result?.isCustomized) {
+        
+        return res.render('index', { result});
+    } else {
+        return res.redirect(result.originalUrl)
+    }
+});
+
+const getAllShortUrlOfUser = asyncHandler(
+    async (req: CustomeRequest, res: Response) => {
+        const userId = req?.user?._id;
+
+        const result = await Url.find({ owner: userId }).select(
+            '-userId'
+        );
+
+        return res.status(200).json(new ApiResponse(200, 'Success', result));
+    }
+);
+
+const getAllStaticsByProjectId = asyncHandler(async (req:CustomeRequest, res:Response)=>{
+    
+})
+
+// https://ipinfo.io/${clientIp}?token=${IPINFO_API_KEY}
+
+export { getMetaData, getShortLink, shortUrl, getAllShortUrlOfUser };

@@ -101,6 +101,7 @@ const Login = () => {
                         borderColor: '#3C434B',
                     }}
                     disabled={isSubmitting}
+                    fullWidth
                 />
             </form>
         </div>

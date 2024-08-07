@@ -8,6 +8,8 @@ import Switch from "./Switch";
 import TextArea from "./TextArea";
 import TextInput from "./TextInput";
 import ToolMenuWrapper, { ToolOptions } from "./ToolMenuWrapper";
+import { Loader, BarLoader, ColorLoader } from "./Loaders";
+
 export {
     Avatar,
     AvatarGroup,
@@ -20,5 +22,8 @@ export {
     ToolMenuWrapper,
     ToolOptions,
     Modal,
-    TextArea
+    Loader,
+    BarLoader,
+    TextArea,
+    ColorLoader
 }

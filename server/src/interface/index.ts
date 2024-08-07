@@ -20,3 +20,5 @@ export const cookieOpt:CookieOptions= {
     secure:true,
     sameSite:'none',
 }
+
+export type DeviceType = 'console'| 'mobile' | 'tablet' | 'smarttv' | 'wearable' | 'embedded' | 'desktop'

@@ -66,8 +66,8 @@ const DeleteConfirmation = ({
                     <IoClose
                         cursor="pointer"
                         style={{
-                            height: '1.8rem',
-                            width: '1.8rem',
+                            height: '1vmax',
+                            width: '1vmax',
                             borderRadius: '50%',
                             background: 'transparent',
                         }}
@@ -77,17 +77,17 @@ const DeleteConfirmation = ({
                 <div className={style['content']}>
                     <Avatar size="lg" src={avatar} string={fullName} />
 
-                    <div>{fullName}</div>
+                    <span>{fullName}</span>
                     <p>
                         Warning: This will permanently delete your account, and
                         all your project's.
                     </p>
                 </div>
                 <div className={style['footer']}>
-                    <div>
+                    <p>
                         To confirm, type <strong>"delete my account"</strong> in
                         the box below
-                    </div>
+                    </p>
                     <TextInput
                         fullWidth
                         placeholder=""

@@ -16,7 +16,7 @@ const UserStart = () => {
     };
 
     return (
-        <div className={`${style[`start`]}`}>
+        <div className={`${style[`wrapper`]}`}>
             <h1>Wrapper</h1>
             <div className={`${style['container']}`}>
                 <div className={`${style['header']}`}>

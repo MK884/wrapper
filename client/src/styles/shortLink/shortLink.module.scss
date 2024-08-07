@@ -1,0 +1,75 @@
+@import '../mixin';
+
+.wrapper {
+    display: flex;
+    padding: 5rem 8rem;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    gap: 2rem;
+    .header {
+        h4 {
+            font-size: 2vmax;
+        }
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+        > div {
+            display: flex;
+            width: auto;
+            flex-wrap: nowrap;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+        }
+    }
+    .body > * {
+        margin-bottom: 0.5rem;
+    }
+}
+
+@include lg {
+    .wrapper {
+        padding: 5rem;
+    }
+}
+@include md {
+    .wrapper {
+        padding: 3rem;
+    }
+}
+@include sm {
+    .wrapper {
+        padding: 3rem 2rem;
+        .header {
+            flex-direction: column;
+            gap: 0.8rem;
+            > div {
+                width: 100%;
+                & > :nth-child(1) {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+@include xs {
+    .wrapper {
+        padding: 3rem 1rem;
+        .header {   
+            flex-direction: column;
+            gap: 0.8rem;
+            > div {
+                width: 100%;
+                flex-direction: column;
+                & > :nth-child(1) {
+                    width: 100%;
+                }
+                & > :nth-child(2) {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

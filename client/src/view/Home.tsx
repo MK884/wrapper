@@ -1,12 +1,11 @@
 import Container from '../ui/Container';
 import style from '../styles/home/home.module.scss';
-import { Avatar, Button, Divider, Modal, ToolMenuWrapper, ToolOptions } from '../ui';
+import { Avatar,  Divider, Modal,ToolOptions } from '../ui';
 import React from 'react';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdOutlineContentCopy } from 'react-icons/md';
 import { IoAnalytics } from 'react-icons/io5';
-import { toast } from 'react-toastify';
 import { FaRegEdit } from 'react-icons/fa';
 import { IoQrCodeOutline } from 'react-icons/io5';
 import { IoMdDoneAll } from 'react-icons/io';
@@ -17,14 +16,16 @@ interface CardContainerProps {
     link: string;
     clicks?: number;
     projectId: string;
+    lastUpdated?:string
 }
 
-const CardContainer = ({
+export const CardContainer = ({
     AvatarUrl,
     fullName,
     link,
     clicks = 0,
     projectId,
+    lastUpdated
 }: CardContainerProps) => {
     const [isMenuVisible, setIsMenuVisible] = React.useState<boolean>(false);
     const menuRef = React.useRef<HTMLDivElement>(null);
@@ -56,7 +57,10 @@ const CardContainer = ({
             <Container className={style['card-container']}>
                 <div className={style['card-data']}>
                     <Avatar src={AvatarUrl} string={fullName} />
+                    <div className={style['link-info']}>
                     <p>{link}</p>
+                    {lastUpdated && <p className={style['last-update']}>{lastUpdated}</p>}
+                    </div>
                 </div>
                 <div className={style['card-tool']}>
                     <div className={style['click']}>
@@ -105,14 +109,14 @@ const Home = () => {
             <div className={style['performance']}>
                 <div className={style['top-project']}>
                     <h6>Top projects</h6>
-                    <CardContainer link="Short Link" projectId="" clicks={10} />
+                    <CardContainer link="Short Link" lastUpdated='Dec 25 2023' projectId="" clicks={10} />
                     <CardContainer link="Short Link" projectId="" clicks={10} />
                     <CardContainer link="Short Link" projectId="" clicks={10} />
                     <CardContainer link="Short Link" projectId="" clicks={10} />
                     <CardContainer link="Short Link" projectId="" clicks={10} />
                 </div>
                 <div>
-                    <h4>Analytics</h4>
+                    <h6>Analytics</h6>
                 </div>
             </div>
         </div>

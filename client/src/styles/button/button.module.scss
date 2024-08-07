@@ -3,7 +3,7 @@
 .button {
     @include button();
     &-fullWidth {
-        width: -webkit-fill-available;
+        width: 100%;
     }
 
     &:disabled, &[disabled]{

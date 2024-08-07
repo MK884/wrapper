@@ -1,11 +1,12 @@
 @import '../colors';
+@import '../mixin';
 
 .setting-page {
     width: 100%;
     display: flex;
-    padding: 5rem 10rem;
+    padding: 5rem 8rem;
     flex-direction: row;
-    gap: 3rem;
+    gap: 3vmax;
     .profile-container {
         overflow: hidden;
         min-width: 20%;
@@ -23,9 +24,13 @@
         gap: 2rem;
         overflow-y: auto;
         overflow-x: hidden;
+        h4{
+            font-size: 1.2vmax;
+        }
         >p{
             text-align: center;
-            font-size: larger;
+            font-size: 1.5vmax;
+            font-weight: 600;
             color: var(--text-defualt);
         }
         .field-container{
@@ -43,7 +48,7 @@
             }
             p {
                 color: var(--text-placeholder);
-                font-size: small;
+                font-size: .8vmax;
             }
         }
     }
@@ -55,6 +60,10 @@
     color: var(--text-placeholder);
     flex-direction: column;
     gap: 1rem;
+    width: auto;
+    h4{
+        font-size: 1.2vmax;
+    }
     .header{
         display: flex;
         flex-direction: row;
@@ -74,6 +83,9 @@
         padding: 12px;
         background-color:  var(--page-default);
         user-select: all;
+        p{
+            font-size: 1vmax;
+        }
     }
     .content{
         margin: 0 1rem;
@@ -81,9 +93,49 @@
         flex-direction: column;
         gap: 1rem;
         align-items: center;
+        span{
+            font-size: 1vmax;
+        }
         p{
             width: 300px;
+            margin: 0 1rem;
             text-align: center;
+            font-size: .8vmax;
         }
+    }
+}
+
+
+@include lg{
+    .setting-page{
+        padding: 1rem;
+    }
+}
+@include xl{
+    .setting-page{
+        padding: 1rem;
+    }
+}
+@include md{
+    .setting-page{
+        padding: 1rem;
+    }
+}
+@include sm{
+    .setting-page{
+        padding: 1rem;
+        flex-direction: column-reverse;
+    }
+    .setting-container{
+        min-width: 100%;
+    }
+}
+@include xs{
+    .setting-page{
+        padding: 1rem;
+        flex-direction: column-reverse;
+    }
+    .setting-container{
+        min-width: 100%;
     }
 }
