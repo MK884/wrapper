@@ -93,3 +93,18 @@ export interface PasswordInputProps {
     value?: string;
     [key: string]: any;
 }
+
+
+export interface CardContainerProps {
+    _id: string;
+    shortUrl: string;
+    originalUrl?: string;
+    domainIcon: string;
+    clicks: number;
+    updatedAt?: string;
+    isCustomized: boolean;
+    title?:string;
+    description?:string;
+    image?: string;
+    domain?:string
+}

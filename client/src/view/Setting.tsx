@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import { usePrivateAxios } from '../services/api';
 import { deleteUser, updateAvatar, updateDetails } from '../services/user';
 
-const DeleteConfirmation = ({
+export const DeleteConfirmation = ({
     setisModalOpen,
     avatar,
     fullName,

@@ -2,27 +2,18 @@ import React from 'react';
 import style from '../styles/create-new/shortLink.module.scss';
 import Container from '../ui/Container';
 import { CiGlobe } from 'react-icons/ci';
-import { Avatar, Button, TextArea, TextInput } from '../ui';
+import { Avatar, Button, Loader, TextArea, TextInput } from '../ui';
 import { FaRegImage } from 'react-icons/fa6';
 import { MdOutlineContentCopy } from 'react-icons/md';
 import { IoMdDoneAll } from 'react-icons/io';
 import { IoMdArrowRoundBack } from 'react-icons/io';
-import { getMetaData, getShortUrl } from '../services/urls';
+import { editUrl, getMetaData, getShortUrl } from '../services/urls';
 import { usePrivateAxios } from '../services/api';
 import { IoMdClose } from 'react-icons/io';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import config from '../config';
-
-
-function isValidHttpsUrl(url:string) {
-    try {
-      const parsedUrl = new URL(url);
-      return parsedUrl.protocol === 'https:' && (!parsedUrl.hostname.includes('localhost') && parsedUrl.hostname !== '127.0.0.1');
-    } catch (error) {
-      return false;
-    }
-  }
+import { isValidHttpsUrl } from '../utils';
 
 interface Formfields {
     title?: string;
@@ -37,18 +28,38 @@ let fetchData: { [key: string]: any } = {};
 const CreateShortLink = () => {
     const privateAxios = usePrivateAxios();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    let statsData;
+
+    const stats = location.state;
+    if (stats) {
+        if (stats?.isCustomized) {
+            statsData = {
+                title: stats?.title,
+                description: stats?.description,
+                image: stats?.image,
+                domain: stats?.domain,
+                avatar: stats?.domainIcon,
+            };
+        }
+    }
 
     const fileRef = React.useRef<HTMLInputElement | null>(null);
-
     const [ShowCopy, setShowCopy] = React.useState<boolean>(true);
-
-    const [formFields, setFormFields] = React.useState<Formfields>({});
-
+    const [formFields, setFormFields] = React.useState<Formfields>(
+        statsData ?? {}
+    );
     const [originalUrlError, setOriginalUrlError] = React.useState<string>();
-    const [originalUrl, setOriginalUrl] = React.useState<string>();
+    const [originalUrl, setOriginalUrl] = React.useState<string>(
+        stats?.originalUrl ?? ''
+    );
     const [shortUrl, setShortUrl] = React.useState<string>();
     const [imageUrl, setImageUrl] = React.useState<string>();
     const [imageFile, setImageFile] = React.useState<File>();
+    const [isImageLoading, setIsImageLoading] = React.useState<boolean>(false);
+    const [isLinkGenerating, setIsLinkGenerating] =
+        React.useState<boolean>(false);
 
     const handleOriginalUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
         let url = e?.target?.value;
@@ -71,11 +82,18 @@ const CreateShortLink = () => {
 
     React.useEffect(() => {
         const getMeta = async () => {
+            if (stats?.isCustomized && stats?.originalUrl === originalUrl)
+                return;
             if (!originalUrl || originalUrlError) return;
-            console.log(originalUrl === fetchData?.originalUrl)
-            if(fetchData?.originalUrl && originalUrl === fetchData?.originalUrl) return;
+
+            if (
+                fetchData?.originalUrl &&
+                originalUrl === fetchData?.originalUrl
+            )
+                return;
             console.log('fetch data');
 
+            setIsImageLoading(true);
             try {
                 const { data } = await getMetaData(originalUrl, privateAxios);
 
@@ -88,24 +106,27 @@ const CreateShortLink = () => {
                     image: data?.banner || data?.domainIcon,
                     title: data?.title,
                     domain: data?.domain,
-                    originalUrl: data?.originalUrl
+                    originalUrl: data?.originalUrl,
                 };
                 console.log(metaData);
-                
+
                 fetchData = metaData;
 
                 setFormFields(fetchData);
             } catch (error) {
                 console.error(error);
+            } finally {
+                setIsImageLoading(false);
             }
         };
+
         const getData = setTimeout(() => {
             getMeta();
         }, 2000);
 
         return () => {
             clearTimeout(getData);
-            fetchData = {}
+            fetchData = {};
         };
     }, [originalUrl]);
 
@@ -119,6 +140,7 @@ const CreateShortLink = () => {
     };
 
     const setImage = (imagePath: string) => {
+        setIsImageLoading(true);
         if (imagePath.length > 4) {
             clearImage();
             setFormFields((prev) => ({
@@ -128,12 +150,13 @@ const CreateShortLink = () => {
         } else {
             clearImage();
         }
+        setIsImageLoading(false);
     };
 
     const handleImageUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
         let targetImageUrl = e?.target?.value;
         setImageUrl(targetImageUrl);
-        setImageFile(undefined)
+        setImageFile(undefined);
         if (isValidHttpsUrl(targetImageUrl)) {
             setImage(targetImageUrl);
         }
@@ -159,45 +182,103 @@ const CreateShortLink = () => {
         }));
     };
 
-    const handleClearImageClick = () =>{
-        setImageUrl("");
+    const handleClearImageClick = () => {
+        setImageUrl('');
         setImageFile(undefined);
         clearImage();
-    }
+    };
 
-    const submitData = async () => {
+    const prepareData = () => {
         const Data: { [key: string]: any } = {};
 
         Data.originalUrl = originalUrl;
 
-        if (
+        const isChnaged =
             formFields?.title !== fetchData?.title ||
             formFields?.description !== fetchData?.description ||
-            formFields?.image !== fetchData?.image
-        ) {
+            formFields?.image !== fetchData?.image;
+
+        if (isChnaged) {
             Data.title = formFields.title;
             Data.description = formFields.description;
             Data.image = formFields.image ?? fetchData.image;
         }
 
-        if(imageFile) Data.imageFile = imageFile && imageFile
+        if (imageFile) Data.imageFile = imageFile && imageFile;
+
+        return Data;
+    };
+
+    const submitEditData = async () => {
+        const isUnChanged =
+            stats?.originalUrl === originalUrl &&
+            stats?.title === formFields?.title &&
+            stats?.description === formFields?.description &&
+            stats?.image === formFields?.image;
+
+        if (isUnChanged) {
+            navigate('/sl', { replace: true });
+            return;
+        }
+
+        const Data = prepareData();
+
+        if (stats?.originalUrl === originalUrl && !Data.title) {
+            console.log('no chnages Made');
+            navigate('/sl', { replace: true });
+            return;
+        }
+
+        const editData: { [key: string]: any } = {};
+        if (stats?.originalUrl !== originalUrl)
+            editData.originalUrl = Data.originalUrl;
+        if (stats?.title !== Data.title) editData.title = Data.title;
+        if (stats?.description !== Data.description)
+            editData.description = Data.description;
+        if (stats?.image !== Data.image) editData.image = Data.image;
+        if (Data.imageFile) editData.imageFile = Data.imageFile;
+
+        console.log(editData);
+
+        setIsLinkGenerating(true);
         
+        try {
+            const response = await editUrl(
+                editData,
+                stats?._id,
+                privateAxios
+            );
+            if (response) {
+                toast.success('URL Updated successfully', { autoClose: 3000 });
+                navigate(`/sl`, { replace: true });
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLinkGenerating(false);
+        }
+    };
+
+    const submitData = async () => {
+        setIsLinkGenerating(true);
+
+        const Data = prepareData();
         // console.log(Data);
         try {
             const response = await getShortUrl(Data, privateAxios);
 
             console.log(response?.data);
-            let shortUrl = `${config.appURL}/${response.data.shortUrl}`
+            let shortUrl = `${config.appURL}/${response.data.shortUrl}`;
 
             setShortUrl(shortUrl);
 
             navigator.clipboard.writeText(shortUrl);
-            toast.success("Copied short url to clipboard",{ autoClose: 3000})
+            toast.success('Copied short url to clipboard', { autoClose: 3000 });
             navigate(`/sl`, { replace: true });
-            
         } catch (error) {
             console.error(error);
-            
+        } finally {
+            setIsLinkGenerating(false);
         }
     };
     return (
@@ -221,15 +302,18 @@ const CreateShortLink = () => {
                     <div className={style['header']}>
                         <div className={style['icon']}>
                             {formFields?.avatar ? (
-                                <Avatar src={formFields?.avatar} styles={{
-                                    background:'white',
-                                    border: 'none'
-                                }}/>
+                                <Avatar
+                                    src={formFields?.avatar}
+                                    styles={{
+                                        background: 'white',
+                                        border: 'none',
+                                    }}
+                                />
                             ) : (
                                 <CiGlobe size="1.4rem" />
                             )}
                         </div>
-                        <h4>Create New Link</h4>
+                        <h4>{stats ? 'Edit Link' : 'Create New Link'}</h4>
                     </div>
                     <div className={style['body']}>
                         <div className={style['link-redirect']}>
@@ -323,9 +407,7 @@ const CreateShortLink = () => {
                                     className={style['tool']}
                                     onClick={() => {
                                         setShowCopy(false);
-                                        navigator.clipboard.writeText(
-                                            shortUrl
-                                        );
+                                        navigator.clipboard.writeText(shortUrl);
                                         setTimeout(
                                             () => setShowCopy(true),
                                             1000
@@ -341,11 +423,19 @@ const CreateShortLink = () => {
                             </div>
                         )}
                         <Button
-                            label="Generate Link"
+                            label={
+                                stats
+                                    ? isLinkGenerating
+                                        ? 'Saving...'
+                                        : 'Save'
+                                    : isLinkGenerating
+                                      ? 'Generating...'
+                                      : 'Generate Link'
+                            }
                             fullWidth
-                            onclick={submitData}
+                            onclick={stats ? submitEditData : submitData}
                             disabled={
-                                originalUrl && originalUrl?.length > 4
+                                originalUrl?.length > 4 && !isLinkGenerating
                                     ? false
                                     : true
                             }
@@ -359,7 +449,9 @@ const CreateShortLink = () => {
                     </div>
                     <div className={style['preview-box']}>
                         <div className={`${style['preview-image']}`}>
-                            {formFields?.image ? (
+                            {isImageLoading ? (
+                                <Loader />
+                            ) : formFields?.image ? (
                                 <>
                                     <img
                                         src={formFields?.image}

@@ -4,6 +4,8 @@ import {
     ApiError,
     ApiResponse,
     asyncHandler,
+    deleteSingleAsset,
+    generateQrCod,
     uploadOnCloudinary,
 } from '../utils';
 import { country, GOOGLE_FAVICON_URL } from '../constant';
@@ -11,10 +13,9 @@ import parse from 'node-html-parser';
 import he from 'he';
 import { Static, Url } from '../models';
 import { UAParser } from 'ua-parser-js';
-import ejs from 'ejs'
+import mongoose from 'mongoose';
 
 const isValidUrl = (url: string): boolean => {
-
     try {
         let parseUrl = new URL(url);
         return (
@@ -35,7 +36,8 @@ const getDomainOfUrl = (urlString: string) => {
         if (host.endsWith('.vercel.app')) return 'vercel.app';
         if (host === 'raw.githubusercontent.com') return 'github.com';
         if (host === 'images.unsplash.com') return 'unsplash.com';
-        if(host === 'projects.100xdevs.com') return '100xdevs.com'
+        if (host === 'projects.100xdevs.com') return '100xdevs.com';
+        if (host === 'app.eraser.io') return 'eraser.io';
         return host;
     } catch (error) {
         console.error(error);
@@ -61,13 +63,12 @@ const generateShortUrl = (userId: string): string => {
     return randomString + last4Digits;
 };
 
-const getCountryNameByCode = (code:string):string =>{
-
+const getCountryNameByCode = (code: string): string => {
     let countryCode = code.toUpperCase();
     const countryName = country[countryCode];
 
-    return countryName ? countryName : "Unknown Country"
-}
+    return countryName ? countryName : 'Unknown Country';
+};
 
 const getMetaData = asyncHandler(async (req: CustomeRequest, res: Response) => {
     const { url } = req?.body;
@@ -188,21 +189,21 @@ const getShortLink = asyncHandler(
 
         const shortUrl = generateShortUrl(userId.toString());
         // const base_url = `${req.protocol}://${req.get('host')}`;
-        // const fullShortUrl = `${base_url}/${shortUrl}`;
 
         const domain = getDomainOfUrl(originalUrl);
         const domainIcon = `${GOOGLE_FAVICON_URL}${domain}`;
 
         const data: { [key: string]: any } = {};
 
+        data.originalUrl = originalUrl;
+        data.shortUrl = shortUrl;
+        data.domain = domain;
+        data.domainIcon = domainIcon;
+        data.owner = userId;
+
         if (!title) {
             // there is no changes in preview
 
-            data.originalUrl = originalUrl;
-            data.shortUrl = shortUrl;
-            data.domain = domain;
-            data.domainIcon = domainIcon;
-            data.owner = userId;
             try {
                 const response = await Url.create(data);
 
@@ -220,11 +221,6 @@ const getShortLink = asyncHandler(
         } else {
             // here we have some changes in preview
 
-            data.owner = userId;
-            data.originalUrl = originalUrl;
-            data.shortUrl = shortUrl;
-            data.domain = domain;
-            data.domainIcon = domainIcon;
             data.isCustomized = true;
             data.title = title;
             data.description = description;
@@ -284,10 +280,9 @@ const shortUrl = asyncHandler(async (req: Request, res: Response) => {
         req.socket.remoteAddress ||
         req.ip;
 
-    console.log("IP => ", clientIp);
-    
+    console.log('IP => ', clientIp);
 
-    const uaParser = new UAParser();
+    const uaParser = new UAParser(req.headers['user-agent']);
     const parser = uaParser.getDevice();
     const clientDevice: DeviceType = (parser.type as DeviceType) || 'desktop';
 
@@ -299,7 +294,7 @@ const shortUrl = asyncHandler(async (req: Request, res: Response) => {
     //         `https://ipinfo.io/?token=${process.env.IPINFO_API_KEY}`
     //     );
     //     console.log(ipInfo);
-        
+
     // } catch (error) {
     //     console.error(error);
     // }
@@ -309,51 +304,269 @@ const shortUrl = asyncHandler(async (req: Request, res: Response) => {
     // const clientRegion = ipInfo?.data?.region ?? '';
     // const clientCountryCode = ipInfo?.data?.country ?? ''; //here we get only country code need to convert it into full name;
     // const clientCountryName = getCountryNameByCode(clientCountryCode);
-    
+
     const clientCity = 'Mumbai';
     const clientRegion = 'Maharashtra';
-    const clientCountryCode = 'IN'; 
+    const clientCountryCode = 'IN';
     const clientCountryName = getCountryNameByCode(clientCountryCode);
 
     try {
         await Static.create({
             projectId: result._id,
-            projectType: "Url",
+            projectType: 'Url',
             city: clientCity,
             region: clientRegion,
             country: clientCountryName,
-            device: clientDevice
-        })
-        
+            device: clientDevice,
+        });
     } catch (error) {
         console.error(error);
-        
     }
 
     if (result?.isCustomized) {
-        
-        return res.render('index', { result});
+        return res.render('index', { result });
     } else {
-        return res.redirect(result.originalUrl)
+        return res.redirect(result.originalUrl);
     }
 });
 
 const getAllShortUrlOfUser = asyncHandler(
     async (req: CustomeRequest, res: Response) => {
         const userId = req?.user?._id;
+        // page,limit,search => query
 
-        const result = await Url.find({ owner: userId }).select(
-            '-userId'
-        );
+        const { page, limit, search } = req.query;
 
-        return res.status(200).json(new ApiResponse(200, 'Success', result));
+        let currentPage = Number(page) || 0;
+        let docLimit = Number(limit) || 10;
+        let searchDoc = search || '';
+
+        try {
+            const response = await Url.aggregate([
+                {
+                    $match: {
+                        owner: new mongoose.Types.ObjectId(userId),
+                        $or: [
+                            {
+                                shortUrl: { $regex: searchDoc, $options: 'i' },
+                            },
+                            {
+                                originalUrl: {
+                                    $regex: searchDoc,
+                                    $options: 'i',
+                                },
+                            },
+                        ],
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'statics',
+                        localField: '_id',
+                        foreignField: 'projectId',
+                        as: 'statics',
+                        pipeline: [
+                            {
+                                $project: {
+                                    updatedAt: 1,
+                                    projectType: 1,
+                                },
+                            },
+                        ],
+                    },
+                },
+                {
+                    $addFields: {
+                        clicks: {
+                            $size: '$statics',
+                        },
+                    },
+                },
+                {
+                    $skip: currentPage * docLimit,
+                },
+                {
+                    $limit: docLimit,
+                },
+                {
+                    $project: {
+                        statics: 0,
+                    },
+                },
+            ]);
+
+            if (!response) throw new ApiError(404, 'No data found');
+
+            const total = await Url.find({ owner: userId }).countDocuments();
+
+            return res
+                .status(200)
+                .json(new ApiResponse(200, 'Success', { total, response }));
+        } catch (error) {
+            throw new ApiError(500, 'MongoDb Error: ', error);
+        }
     }
 );
 
-const getAllStaticsByProjectId = asyncHandler(async (req:CustomeRequest, res:Response)=>{
-    
-})
+const getAllStaticsByProjectId = asyncHandler(
+    async (req: CustomeRequest, res: Response) => {
+        const projectId = req?.query?.projectId;
+
+        if (!projectId) throw new ApiError(404, 'projectId not found');
+
+        // aggregate throw error if not match id found
+        const response = await Url.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(projectId.toString()),
+                },
+            },
+            {
+                $lookup: {
+                    from: 'statics',
+                    localField: '_id',
+                    foreignField: 'projectId',
+                    as: 'statics',
+                },
+            },
+            {
+                $addFields: {
+                    clicks: {
+                        $size: '$statics',
+                    },
+                },
+            },
+        ]);
+
+        if (!response.length) throw new ApiError(404, 'No stats available');
+
+        return res.status(200).json(new ApiResponse(200, 'OK', response[0]));
+    }
+);
+
+const deleteUrl = asyncHandler(async (req: CustomeRequest, res: Response) => {
+    // get projectId and verify project and validation
+    // delete url and its statistics
+    // if url have cloudinary image delete themselves
+
+    const userId = new mongoose.Types.ObjectId(req.user._id);
+
+    const { projectId } = req?.params;
+
+    if (!projectId) throw new ApiError(404, 'No projectId available');
+
+    // need to verify the project owner is same or not
+    const UrlOwner = await Url.findById(projectId).select('owner');
+
+    if (!UrlOwner) throw new ApiError(404, 'Project Not Found');
+
+    if (UrlOwner.owner.equals(userId)) {
+        const UrlData = await Url.findByIdAndDelete(projectId);
+
+        let imageUrl = UrlData?.image;
+
+        if (imageUrl?.startsWith('http://res.cloudinary.com/backendmk')) {
+            // need to delete image on cloudinary
+            try {
+                await deleteSingleAsset(imageUrl);
+            } catch (error) {
+                console.error('error in deleting image', error);
+            }
+        }
+
+        const response = await Static.deleteMany({ projectId: projectId });
+
+        if (!response) console.log('No Static to Delete', response);
+
+        return res.status(200).json(new ApiResponse(200, 'Deleted Url Data'));
+    } else {
+        throw new ApiError(402, 'Access denied');
+    }
+});
+
+const editUrl = asyncHandler(async (req: CustomeRequest, res: Response) => {
+    const projectId = req?.params?.projectId;
+
+    if (!projectId) throw new ApiError(404, 'ProjectId must be provided');
+
+    const { originalUrl, title, description, image } = req?.body;
+    const imageFileLocalPath = req?.file?.path;
+
+    const bodyData =
+        originalUrl || title || description || image || imageFileLocalPath;
+
+    if (!bodyData)
+        throw new ApiError(404, 'At least one fieled must be provided');
+
+    const project = await Url.findById(projectId);
+
+    if (!project) throw new ApiError(404, 'No project found');
+
+    const data: { [key: string]: any } = {};
+
+    if (originalUrl && isValidUrl(originalUrl)) {
+        const domain = getDomainOfUrl(originalUrl);
+        const domainIcon = `${GOOGLE_FAVICON_URL}${domain}`;
+
+        data.domain = domain;
+        data.domainIcon = domainIcon;
+        data.originalUrl = originalUrl;
+    }
+
+    if (imageFileLocalPath) {
+        let publicUrl = await uploadOnCloudinary(imageFileLocalPath);
+        if (!publicUrl)
+            throw new ApiError(
+                500,
+                'Somthing wrong with uploading on cloudinary'
+            );
+        data.image = publicUrl?.url;
+    } else if (image) {
+        if (isValidUrl(image)) {
+            data.image = image;
+        } else {
+            throw new ApiError(405, 'Image url is not valid', image);
+        }
+    }
+
+    if (
+        project?.image?.startsWith('http://res.cloudinary.com/backendmk') &&
+        (imageFileLocalPath || image)
+    ) {
+        // need to delete old photo from cloudinary
+        try {
+            await deleteSingleAsset(project?.image);
+        } catch (error) {
+            console.error('error in deleting image', error);
+        }
+    }
+
+    if (title) data.title = title;
+    if (description) data.description = description;
+
+    data.isCustomized = title || description || image || imageFileLocalPath;
+
+    try {
+        const response = await Url.findByIdAndUpdate(projectId, data, {
+            new: true,
+        });
+
+        if (!response) throw new ApiError(500, 'not able to update shortUrl');
+
+        return res.status(200).json(new ApiResponse(200, 'URL Updated'));
+    } catch (error) {
+        throw new ApiError(500, 'Somthing wrong with mongoDb', error);
+    }
+});
 
 // https://ipinfo.io/${clientIp}?token=${IPINFO_API_KEY}
 
-export { getMetaData, getShortLink, shortUrl, getAllShortUrlOfUser };
+export {
+    getMetaData,
+    getShortLink,
+    shortUrl,
+    getAllShortUrlOfUser,
+    getAllStaticsByProjectId,
+    deleteUrl,
+    editUrl,
+};

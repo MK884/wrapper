@@ -73,11 +73,58 @@ const getShortUrl = async (
     }
 };
 
-const getAllShortUrl = async (axios: AxiosInstance) => {
-    if (!axios) return;
+const editUrl = async (
+    { originalUrl, title, imageFile, image, description }: GetShortUrlProps,
+    projectId: string,
+    axios: AxiosInstance
+) => {
+
+    if(!projectId) return ;
+    console.log("request");
+    
+
+    const formData = new FormData();
+
+    if (title) formData.append('title', title);
+    if (description) formData.append('description', description);
+    if (imageFile) {
+        formData.append('imageFile', imageFile);
+    } else if (image) {
+        formData.append('image', image);
+    }
+    if (originalUrl) formData.append('originalUrl', originalUrl);
 
     try {
-        const response = await axios.get('/url/get-all');
+
+        const response = await axios.patch(`/url/e/${projectId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        return response?.data;
+    } catch (error) {
+        if (error instanceof AxiosError && error?.response) {
+            let serverError = error?.response?.data;
+
+            console.error('Server error in getShortUrl', serverError);
+
+            throw new Error(serverError?.message || 'Server error in getShort');
+        }
+        console.error('Error in getShortUrl', error);
+        throw new Error('Unexpected Error in getShortUrl');
+    }
+};
+const getAllShortUrl = async (
+    axios: AxiosInstance,
+    search: string | undefined
+) => {
+    if (!axios) return;
+
+    let searchTerm = search ?? '';
+
+    try {
+        const response = await axios.get(`/url/get-all?search=${searchTerm}`);
 
         return response?.data;
     } catch (error) {
@@ -93,23 +140,51 @@ const getAllShortUrl = async (axios: AxiosInstance) => {
     }
 };
 
-// const redirectTo = async (shortUrl: string) => {
-//     try {
-//         const response = await publicAxios.get(`/url/?shortUrl=${shortUrl}`, { responseType:'text'});
-//         console.log(response);
-//         if(response.status === 200){
-//             window.location.href = response?.data
-//         }else{
-//             const newWindow = window.open();
-//             if(newWindow){
-//                 newWindow.document.write(response.data)
-//                 newWindow.document.close();
-//             }
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         throw new Error('Error');
-//     }
-// };
+const deleteUrlData = async (projectId: String, axios: AxiosInstance) => {
+    if (!projectId || !axios) return;
 
-export { getMetaData, getShortUrl, getAllShortUrl };
+    try {
+        const response = await axios.delete(`/url/${projectId}`);
+
+        return response?.data;
+    } catch (error) {
+        if (error instanceof AxiosError && error?.response) {
+            let serverError = error?.response?.data;
+
+            console.error('Server error in deleteUrlData', serverError);
+
+            throw new Error(serverError?.message || 'Server Error');
+        }
+        console.error('Unexpected Error in deleteUrlData ', error);
+        throw new Error('Unexpected error in deleteUrlData');
+    }
+};
+
+const getStatsByProjectId = async (projectId: string, axios: AxiosInstance) => {
+    if (!projectId) return;
+
+    try {
+        const response = await axios.get(`/url/p?projectId=${projectId}`);
+
+        return response?.data;
+    } catch (error) {
+        if (error instanceof AxiosError && error?.response) {
+            let serverError = error.response?.data;
+
+            console.error('Server error in getStatsByProjectId ', serverError);
+
+            throw new Error(serverError?.message || 'Server Error');
+        }
+        console.error('Unexpected error in getStatsByProjectId', error);
+        throw new Error('Unexpected error in getStatsByProjectId');
+    }
+};
+
+export {
+    getMetaData,
+    getShortUrl,
+    getAllShortUrl,
+    deleteUrlData,
+    getStatsByProjectId,
+    editUrl,
+};
