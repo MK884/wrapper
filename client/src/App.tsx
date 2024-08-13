@@ -6,7 +6,7 @@ import {
     About,
     CreateShortLink,
     CreatNew,
-    Edit,
+    Analytics,
     Help,
     Home,
     Redirect,
@@ -39,7 +39,7 @@ const RouteApp = () => {
                 <Route element={<Layout />}>
                     <Route element={<RequireAuth />}>
                         <Route path="/" element={<Home />} />
-                        <Route path="/p/:projectId" element={<Edit />} />
+                        <Route path="/p/:projectId" element={<Analytics />} />
                         <Route path="/create-new" element={<CreatNew />} />
                         <Route path="/sl" element={<ShortLink />} />
                         <Route

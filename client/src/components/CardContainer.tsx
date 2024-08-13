@@ -15,6 +15,7 @@ import { MdOutlineFileDownload } from 'react-icons/md';
 import { LuClipboardCopy } from 'react-icons/lu';
 import { generateQrCod } from '../utils';
 import Container from '../ui/Container';
+import { SiGoogleanalytics } from "react-icons/si";
 import style from '../styles/cardContainer/cardContainer.module.scss';
 import { CardContainerProps } from 'interface';
 import config from '../config';
@@ -314,6 +315,16 @@ export const CardContainer = (props: CardContainerProps) => {
                     ref={menuRef}
                     className={`${style['tool-options']} ${isMenuVisible && style['active']}`}
                 >
+                    <ToolOptions
+                        label="Analytics"
+                        Icon={SiGoogleanalytics}
+                        onClick={() =>
+                            navigate(`/p/${_id}`)
+                        }
+                        IconStyles={{
+                            transform: 'scaleX(-1)'
+                        }}
+                    />
                     <ToolOptions
                         label="Edit"
                         Icon={FaRegEdit}

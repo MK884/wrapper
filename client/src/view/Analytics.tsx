@@ -30,7 +30,7 @@ interface Stats {
     updatedAt?:string,
 }
 
-const Edit = () => {
+const Analytics = () => {
     const { projectId } = useParams();
 
     const privateAxios = usePrivateAxios();
@@ -130,4 +130,4 @@ const Edit = () => {
     );
 };
 
-export default Edit;
+export default Analytics;

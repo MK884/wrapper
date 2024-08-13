@@ -7,7 +7,7 @@ import Redirect from "./Redirect";
 import Setting from "./Setting";
 import UserStart from "./UserStart";
 import ShortLink from "./ShortLink";
-import Edit from "./Edit";
+import Analytics from "./Analytics";
 
 export {
     About,
@@ -18,6 +18,6 @@ export {
     CreateShortLink,
     Redirect,
     Setting,
-    Edit,
+    Analytics,
     ShortLink
 }

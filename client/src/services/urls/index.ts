@@ -1,5 +1,4 @@
 import { AxiosError, AxiosInstance } from 'axios';
-import publicAxios from '../../services/api';
 
 const getMetaData = async (url: string, axios: AxiosInstance) => {
     if (!url) return 'No url specified';
