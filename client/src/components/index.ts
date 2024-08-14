@@ -4,11 +4,13 @@ import ProfileMenu from "./ProfileMenu";
 import Register from "./Register";
 import ThemeSwitch from "./ThemeSwitch";
 import { CardContainer } from "./CardContainer";
+import AnalyticsTabsCard from "./AnalyticsTabsCard";
 export {
     Login,
     MainMenu,
     ProfileMenu,
     ThemeSwitch,
     Register,
-    CardContainer
+    CardContainer,
+    AnalyticsTabsCard
 }

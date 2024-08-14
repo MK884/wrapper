@@ -1,0 +1,32 @@
+@import '../colors';
+
+.header{
+    padding: 0rem 1.5rem;
+    display: flex;
+    // min-height: 15%;
+    border-bottom: .5px solid var(--border-weak);
+    .tab{
+        padding: 1rem 10px;
+        max-width: fit-content;
+        cursor: pointer;
+        color: var(--text-placeholder);
+        &:hover{
+
+            color: var(--text-default);
+        }
+       &.active{
+        border-bottom: 1px solid var(--border-primary);
+        color: var(--text-default);
+    }
+    }
+}
+
+.body{
+    min-height: calc( 100% - 15%);
+    padding: 1rem;
+    .no-data{
+        text-align: center;
+        font-size: small;
+        color: var(--text-placeholder);
+    }
+}

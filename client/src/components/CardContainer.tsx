@@ -320,6 +320,7 @@ export const CardContainer = (props: CardContainerProps) => {
                         Icon={SiGoogleanalytics}
                         onClick={() =>
                             navigate(`/p/${_id}`)
+                           
                         }
                         IconStyles={{
                             transform: 'scaleX(-1)'

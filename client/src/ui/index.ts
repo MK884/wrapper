@@ -9,6 +9,7 @@ import TextArea from "./TextArea";
 import TextInput from "./TextInput";
 import ToolMenuWrapper, { ToolOptions } from "./ToolMenuWrapper";
 import { Loader, BarLoader, ColorLoader } from "./Loaders";
+import Container from "./Container";
 
 export {
     Avatar,
@@ -25,5 +26,6 @@ export {
     Loader,
     BarLoader,
     TextArea,
+    Container,
     ColorLoader
 }
