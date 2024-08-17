@@ -1,10 +1,15 @@
+import { useUser } from '../features/auth/authSlice';
+import { useAppSelector } from '../app/hook';
 import { CardContainer } from '../components';
 import style from '../styles/home/home.module.scss';
 
 const Home = () => {
+
+    const user = useAppSelector(useUser)
+
     return (
         <div className={style['home']}>
-            <h1>Welcome Khalid Merchant</h1>
+            {user && <h1>Welcome {user?.fullName}</h1>}
             <div className={style['performance']}>
                 <div className={style['top-project']}>
                     <h6>Top projects</h6>
