@@ -1,3 +1,4 @@
+import Chart from 'react-apexcharts';
 import React from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { usePrivateAxios } from '../services/api';
@@ -6,10 +7,11 @@ import style from '../styles/analytics/analytics.module.scss';
 import Container from '../ui/Container';
 import { Avatar } from '../ui';
 import { MdOutlineContentCopy } from 'react-icons/md';
-import { MdOutlineSubdirectoryArrowRight } from "react-icons/md";
+import { MdOutlineSubdirectoryArrowRight } from 'react-icons/md';
 import { IoMdDoneAll } from 'react-icons/io';
 import config from '../config';
 import { AnalyticsTabsCard } from '../components';
+import { ApexOptions } from 'apexcharts';
 
 interface Stats {
     _id: string;
@@ -31,28 +33,224 @@ interface linkInfo {
     totalClicks: number;
 }
 
+const colors = [
+    '#008FFB',
+    '#00E396',
+    '#FEB019',
+    '#FF4560',
+    '#775DD0',
+    '#00D9E9',
+    '#FF66C3',
+];
 
+const CountryGraph = () => {
+    const series = [
+        {
+            name: 'Clicks',
+            data: [400],
+        },
+    ];
+    const options = {
+        chart: {
+            type: 'bar',
+            height: 350,
+            stacked: true,
+            stackedType: '100%',
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 12,
+                horizontal: true,
+                barHeight: '60px',
+                dataLabels: {
+                    position: 'bottom',
+                },
+            },
+        },
+        grid: {
+            show: false,
+        },
+        dataLabels: {
+            enabled: true,
+            textAnchor: true,
+            formatter: function (val: any, opt: any) {
+                return opt.w.globals.labels[opt.dataPointIndex];
+            },
+        },
+        xaxis: {
+            show: false,
+            categories: ['India'],
+            axisBorder: false,
+            labels: {
+                show: false,
+            },
+        },
+        yaxis: {
+            labels: {
+                show: false,
+            },
+        },
+    };
+
+    return (
+        <>
+            <Chart options={options} type="bar" series={series} height={300} />
+        </>
+    );
+};
+
+const ClicksGraph = ({
+    seriesData,
+    categories,
+}: {
+    seriesData: Array<number>;
+    categories: Array<string>;
+}) => {
+    if (!seriesData?.length && !categories?.length) return;
+
+    const series = [
+        {
+            name: 'Clicks',
+            data: seriesData,
+        },
+    ];
+
+    const options: ApexOptions = {
+        grid: {
+            show: false,
+        },
+        chart: {
+            height: 350,
+            type: 'area',
+            toolbar: {
+                show: true,
+
+                tools: {
+                    download: true,
+                    selection: false,
+                    zoom: false,
+                    zoomin: false,
+                    zoomout: false,
+                    pan: false,
+                    reset: false,
+                },
+            },
+        },
+        dataLabels: {
+            enabled: false,
+        },
+        stroke: {
+            curve: 'smooth',
+        },
+        xaxis: {
+            type: 'datetime',
+
+            categories: categories,
+            labels: {
+                style: {
+                    colors: 'var(--text-placeholder)',
+                },
+            },
+        },
+        yaxis: {
+            stepSize: 1,
+            forceNiceScale: true,
+            labels: {
+                style: {
+                    colors: 'var(--text-placeholder)',
+                },
+            },
+        },
+        tooltip: {
+            x: {
+                format: 'dd/MM/yy HH:mm',
+            },
+        },
+    };
+
+    return (
+        <>
+            <Chart options={options} series={series} type="area" height={300} />
+        </>
+    );
+};
+
+const DeviceGraph = () => {
+    const series = [
+        {
+            name: 'Clicks',
+            data: [5, 8],
+        },
+    ];
+    const options = {
+        chart: {
+            type: 'bar',
+            height: 350,
+            stacked: true,
+            stackedType: '100%',
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 12,
+                horizontal: true,
+                barHeight: '60px',
+                dataLabels: {
+                    position: 'bottom',
+                },
+            },
+        },
+        grid: {
+            show: false,
+        },
+        dataLabels: {
+            enabled: true,
+            textAnchor: true,
+            formatter: function (val: any, opt: any) {
+                return opt.w.globals.labels[opt.dataPointIndex];
+            },
+        },
+        xaxis: {
+            show: false,
+            categories: ['Desktop', 'Mobile'],
+
+            axisBorder: false,
+            labels: {
+                show: false,
+            },
+        },
+        yaxis: {
+            labels: {
+                show: false,
+            },
+        },
+    };
+
+    return (
+        <>
+            <Chart options={options} type="bar" series={series} height={300} />
+        </>
+    );
+};
 
 const device = [
     {
-        label:'Devices',
-        body:<div>Devices</div>
-
-    }
+        label: 'Devices',
+        body: <DeviceGraph />,
+    },
 ];
 const locations = [
     {
-        label:'Country',
-        body:<div>Country</div>
+        label: 'Country',
+        body: <CountryGraph />,
     },
     {
-        label:'City',
-        body:<div>City</div>
+        label: 'City',
+        body: <div>City</div>,
     },
     {
-        label:'Region'
-    }
-]
+        label: 'Region',
+    },
+];
 
 const Analytics = () => {
     const { projectId } = useParams();
@@ -63,17 +261,23 @@ const Analytics = () => {
 
     if (location?.state) console.log(location.state);
 
-    const [statas, setStats] = React.useState<Stats[] | []>([]);
     const [linkInfo, setLinkInfo] = React.useState<linkInfo>();
+    const [timeStamp, setTimeStamp] = React.useState<Array<string> | null>(
+        null
+    );
+    const [clicks, setClicks] = React.useState<Array<number> | null>(null);
     const [ShowCopy, setShowCopy] = React.useState<boolean>(true);
 
-    const devices: { [key: string]: number } = {};
-    const countrys: { [key: string]: number } = {};
-    const citys: { [key: string]: number } = {};
-    const regions: { [key: string]: number } = {};
+    const prepareStats = (stats: Stats[]) => {
+        if (!stats?.length) return;
 
-    statas.length &&
-        statas.forEach((item) => {
+        const devices: { [key: string]: number } = {};
+        const countrys: { [key: string]: number } = {};
+        const citys: { [key: string]: number } = {};
+        const regions: { [key: string]: number } = {};
+        const timeClicks: { [key: string]: number } = {};
+
+        stats.forEach((item) => {
             let device = item?.device;
 
             if (device) {
@@ -113,12 +317,25 @@ const Analytics = () => {
                     regions[region] = 1;
                 }
             }
-        });
 
-    console.log('Devices => ', devices);
-    console.log('Countrys => ', countrys);
-    console.log('Citys => ', citys);
-    console.log('Regions => ', regions);
+            let createdAt = item?.createdAt;
+
+            if (createdAt) {
+                if (timeClicks[createdAt]) {
+                    timeClicks[createdAt] += 1;
+                } else {
+                    timeClicks[createdAt] = 1;
+                }
+            }
+        });
+        if (Object.keys(timeClicks).length) {
+            setTimeStamp(Object.keys(timeClicks));
+            setClicks(Object.values(timeClicks));
+        }
+    };
+
+    timeStamp && console.log('Time => ', timeStamp);
+    clicks && console.log('clicks => ', clicks);
 
     React.useEffect(() => {
         const getStats = async () => {
@@ -139,7 +356,7 @@ const Analytics = () => {
                 };
 
                 setLinkInfo(linkInfo);
-                setStats(stats.data.statics);
+                prepareStats(stats.data.statics);
             } catch (error) {
                 console.error(error);
             }
@@ -164,31 +381,34 @@ const Analytics = () => {
                     <div className={style['body']}>
                         <Container className={style['info']}>
                             <div>
-                                <Avatar src={linkInfo?.domainIcon} styles={{
-                                    background:'transparent',
-                                    border:'none'
-                                }}/>
+                                <Avatar
+                                    src={linkInfo?.domainIcon}
+                                    styles={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                    }}
+                                />
                                 <div className={style['details']}>
                                     <Link
                                         to={`${config.appURL}/${linkInfo?.shortUrl}`}
                                         target="_"
                                         className={style['short-link']}
                                         style={{
-                                            maxWidth:'fit-content'
+                                            maxWidth: 'fit-content',
                                         }}
                                     >
                                         <p>{`${config.appURL}/${linkInfo?.shortUrl}`}</p>
                                     </Link>
-                                   <div>
-                                    <MdOutlineSubdirectoryArrowRight />
-                                   <Link
-                                        to={`${linkInfo?.originalUrl}`}
-                                        target="_"
-                                        className={style['original-link']}
-                                    >
-                                        <p>{`${linkInfo?.originalUrl}`}</p>
-                                    </Link>
-                                   </div>
+                                    <div>
+                                        <MdOutlineSubdirectoryArrowRight />
+                                        <Link
+                                            to={`${linkInfo?.originalUrl}`}
+                                            target="_"
+                                            className={style['original-link']}
+                                        >
+                                            <p>{`${linkInfo?.originalUrl}`}</p>
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                             <div
@@ -202,10 +422,20 @@ const Analytics = () => {
                                 )}
                             </div>
                         </Container>
-                        <Container>Total Clicks : {linkInfo?.totalClicks}</Container>
+                        <Container>
+                            Total Clicks : {linkInfo?.totalClicks}
+                            {timeStamp?.length && clicks?.length ? (
+                                <ClicksGraph
+                                    categories={timeStamp}
+                                    seriesData={clicks}
+                                />
+                            ) : (
+                                <>No Data To show</>
+                            )}
+                        </Container>
                         <div className={style['link-data']}>
-                           <AnalyticsTabsCard data={device}/>
-                           <AnalyticsTabsCard data={locations}/>
+                            <AnalyticsTabsCard data={device} />
+                            <AnalyticsTabsCard data={locations} />
                         </div>
                     </div>
                 </div>
