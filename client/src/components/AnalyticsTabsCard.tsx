@@ -14,13 +14,19 @@ interface data{
 const AnalyticsTabsCard = ({data}:{data:data[]}) => {
     const [tabIndex, setTabIndex] = React.useState<number>(0);
 
+    if (!data || data.length === 0) {
+        return <div>No tabs available</div>;
+    }
+
     return (
         <Container
             styles={{
                 width: '100%',
                 padding: 0,
-                minHeight: '400px',
+                height: '400px',
                 borderRadius: '12px',
+                display:'flex',
+                flexDirection: 'column',
             }}
         >
             <div className={style['header']}>

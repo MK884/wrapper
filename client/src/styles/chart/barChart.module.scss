@@ -1,0 +1,133 @@
+$bgGreen: #dcfce7;
+$bgYellow: #ffedd5;
+$bgPurple: #dbeafe;
+$bgPink: #ffd1e39c;
+$bgAccent: #d1e9f6;
+$bgBlue: #008ffb;
+.wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 1rem 0;
+
+    .bar-wrapper {
+        padding: 0 1rem;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        cursor: pointer;
+        background-color: transparent;
+        position: relative;
+
+        &.yellow {
+            color: var(--yellow-thumb);
+        }
+        &.blue {
+            color: var(--blue-thumb);
+        }
+        &.pink {
+            color: var(--pink-thumb);
+        }
+        &.purple {
+            color: var(--purple-thumb);
+        }
+        &.accent {
+            color: var(--accent-thumb);
+        }
+        &.green {
+            color: var(--green-thumb);
+        }
+
+        &.yellow::after {
+            background-color: var(--yellow-thumb);
+        }
+        &.blue::after {
+            background-color: var(--blue-thumb);
+        }
+        &.purple::after {
+            background-color: var(--purple-thumb);
+        }
+        &.pink::after {
+            background-color: var(--pink-thumb);
+        }
+        &.accent::after {
+            background-color: var(--accent-thumb);
+        }
+        &.green::after {
+            background-color: var(--green-thumb);
+        }
+        
+        &.yellow .bar {
+            background-color: var(--yellow-bar);
+        }
+        &.blue .bar {
+            background-color: var(--blue-bar);
+        }
+        &.purple .bar {
+            background-color: var(--purple-bar);
+        }
+        &.pink .bar {
+            background-color: var(--pink-bar);
+        }
+        &.accent .bar {
+            background-color: var(--accent-bar);
+        }
+        &.green .bar {
+            background-color: var(--green-bar);
+        }
+
+        &::after {
+            transition: opacity 0.2s ease-in-out;
+            content: '';
+            position: absolute;
+            width: 3.5px;
+            border-radius: 18px;
+            height: 120%;
+            left: 0;
+
+            // background-color: rgb(22, 113, 224);
+            opacity: 0;
+            // border-left: 3.5px solid rgb(22, 113, 224);
+        }
+
+        &:hover::after {
+            opacity: 1;
+        }
+        height: 2rem;
+        gap: 5px;
+        .bar {
+            height: 2rem;
+            flex: 0 1 95%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+
+            justify-content: start;
+            padding: 0 0.8rem;
+            gap: 1rem;
+            animation: growBar 0.3s ease-in normal forwards;
+        }
+        .clicks {
+            flex: 1;
+            text-align: end;
+        }
+    }
+}
+
+@keyframes growBar {
+    0% {
+        flex: 0 1 0%;
+    }
+    50% {
+        flex: 0 1 50%;
+    }
+    75% {
+        flex: 0 1 110%;
+    }
+    100% {
+        width: 95%;
+    }
+}

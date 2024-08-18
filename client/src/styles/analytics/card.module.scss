@@ -4,6 +4,7 @@
     padding: 0rem 1.5rem;
     display: flex;
     // min-height: 15%;
+    // flex: 0 0 15%;
     border-bottom: .5px solid var(--border-weak);
     .tab{
         padding: 1rem 10px;
@@ -22,8 +23,11 @@
 }
 
 .body{
-    min-height: calc( 100% - 15%);
-    padding: 1rem;
+    overflow-y: auto;
+    flex: 1;
+    &::-webkit-scrollbar{
+        width: 0;
+    }
     .no-data{
         text-align: center;
         font-size: small;

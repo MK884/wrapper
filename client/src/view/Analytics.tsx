@@ -5,7 +5,7 @@ import { usePrivateAxios } from '../services/api';
 import { getStatsByProjectId } from '../services/urls';
 import style from '../styles/analytics/analytics.module.scss';
 import Container from '../ui/Container';
-import { Avatar } from '../ui';
+import { Avatar, BarChart } from '../ui';
 import { MdOutlineContentCopy } from 'react-icons/md';
 import { MdOutlineSubdirectoryArrowRight } from 'react-icons/md';
 import { IoMdDoneAll } from 'react-icons/io';
@@ -33,71 +33,6 @@ interface linkInfo {
     totalClicks: number;
 }
 
-const colors = [
-    '#008FFB',
-    '#00E396',
-    '#FEB019',
-    '#FF4560',
-    '#775DD0',
-    '#00D9E9',
-    '#FF66C3',
-];
-
-const CountryGraph = () => {
-    const series = [
-        {
-            name: 'Clicks',
-            data: [400],
-        },
-    ];
-    const options = {
-        chart: {
-            type: 'bar',
-            height: 350,
-            stacked: true,
-            stackedType: '100%',
-        },
-        plotOptions: {
-            bar: {
-                borderRadius: 12,
-                horizontal: true,
-                barHeight: '60px',
-                dataLabels: {
-                    position: 'bottom',
-                },
-            },
-        },
-        grid: {
-            show: false,
-        },
-        dataLabels: {
-            enabled: true,
-            textAnchor: true,
-            formatter: function (val: any, opt: any) {
-                return opt.w.globals.labels[opt.dataPointIndex];
-            },
-        },
-        xaxis: {
-            show: false,
-            categories: ['India'],
-            axisBorder: false,
-            labels: {
-                show: false,
-            },
-        },
-        yaxis: {
-            labels: {
-                show: false,
-            },
-        },
-    };
-
-    return (
-        <>
-            <Chart options={options} type="bar" series={series} height={300} />
-        </>
-    );
-};
 
 const ClicksGraph = ({
     seriesData,
@@ -143,13 +78,13 @@ const ClicksGraph = ({
             curve: 'smooth',
         },
         xaxis: {
-            type: 'datetime',
-
+            type: 'category',
             categories: categories,
             labels: {
                 style: {
                     colors: 'var(--text-placeholder)',
                 },
+               show: false,
             },
         },
         yaxis: {
@@ -161,116 +96,44 @@ const ClicksGraph = ({
                 },
             },
         },
-        tooltip: {
-            x: {
-                format: 'dd/MM/yy HH:mm',
-            },
-        },
+        // tooltip: {
+        //     x: {
+        //         formatter: (val) => {
+        //             let localTime = new Date(val).toLocaleString('GB-en', { day:'2-digit', month:'2-digit', year: '2-digit', hour:'2-digit', minute:'2-digit' });
+        //             return localTime;
+        //         }
+        //     },
+        // },
     };
 
     return (
         <>
-            <Chart options={options} series={series} type="area" height={300} />
+            <Chart options={options} series={series} type="area" height={350} />
         </>
     );
 };
 
-const DeviceGraph = () => {
-    const series = [
-        {
-            name: 'Clicks',
-            data: [5, 8],
-        },
-    ];
-    const options = {
-        chart: {
-            type: 'bar',
-            height: 350,
-            stacked: true,
-            stackedType: '100%',
-        },
-        plotOptions: {
-            bar: {
-                borderRadius: 12,
-                horizontal: true,
-                barHeight: '60px',
-                dataLabels: {
-                    position: 'bottom',
-                },
-            },
-        },
-        grid: {
-            show: false,
-        },
-        dataLabels: {
-            enabled: true,
-            textAnchor: true,
-            formatter: function (val: any, opt: any) {
-                return opt.w.globals.labels[opt.dataPointIndex];
-            },
-        },
-        xaxis: {
-            show: false,
-            categories: ['Desktop', 'Mobile'],
-
-            axisBorder: false,
-            labels: {
-                show: false,
-            },
-        },
-        yaxis: {
-            labels: {
-                show: false,
-            },
-        },
-    };
-
-    return (
-        <>
-            <Chart options={options} type="bar" series={series} height={300} />
-        </>
-    );
-};
-
-const device = [
-    {
-        label: 'Devices',
-        body: <DeviceGraph />,
-    },
-];
-const locations = [
-    {
-        label: 'Country',
-        body: <CountryGraph />,
-    },
-    {
-        label: 'City',
-        body: <div>City</div>,
-    },
-    {
-        label: 'Region',
-    },
-];
 
 const Analytics = () => {
     const { projectId } = useParams();
 
     const privateAxios = usePrivateAxios();
 
-    const location = useLocation();
-
-    if (location?.state) console.log(location.state);
-
     const [linkInfo, setLinkInfo] = React.useState<linkInfo>();
-    const [timeStamp, setTimeStamp] = React.useState<Array<string> | null>(
-        null
-    );
+    const [timeStamp, setTimeStamp] = React.useState<Array<string> | null>(null);
+    const [sourceDevice, setSourceDevice] = React.useState< {[key:string]:number} | null>(null);
+    const [sourceCountry, setSourceCountry] = React.useState< {[key:string]:number} | null>(null);
+    const [sourceCity, setSourceCity] = React.useState< {[key:string]:number} | null>(null);
+    const [sourceRegion, setSourceRegion] = React.useState< {[key:string]:number} | null>(null);
     const [clicks, setClicks] = React.useState<Array<number> | null>(null);
     const [ShowCopy, setShowCopy] = React.useState<boolean>(true);
 
+    
+    
+
     const prepareStats = (stats: Stats[]) => {
         if (!stats?.length) return;
-
+        
         const devices: { [key: string]: number } = {};
         const countrys: { [key: string]: number } = {};
         const citys: { [key: string]: number } = {};
@@ -321,10 +184,12 @@ const Analytics = () => {
             let createdAt = item?.createdAt;
 
             if (createdAt) {
-                if (timeClicks[createdAt]) {
-                    timeClicks[createdAt] += 1;
+                let localTime = new Date(createdAt).toLocaleString('GB-en', { day:'2-digit', month:'2-digit', year: '2-digit', hour:'2-digit', minute:'2-digit' })
+
+                if (timeClicks[localTime]) {
+                    timeClicks[localTime] += 1;
                 } else {
-                    timeClicks[createdAt] = 1;
+                    timeClicks[localTime] = 1;
                 }
             }
         });
@@ -332,10 +197,23 @@ const Analytics = () => {
             setTimeStamp(Object.keys(timeClicks));
             setClicks(Object.values(timeClicks));
         }
+
+
+        if(Object.keys(devices).length){
+            setSourceDevice(devices);
+        }
+        if(Object.keys(countrys).length){
+            setSourceCountry(countrys);
+        }
+        if(Object.keys(citys).length){
+            setSourceCity(citys);
+        }
+        if(Object.keys(regions).length){
+            setSourceRegion(regions);
+        }
+
     };
 
-    timeStamp && console.log('Time => ', timeStamp);
-    clicks && console.log('clicks => ', clicks);
 
     React.useEffect(() => {
         const getStats = async () => {
@@ -370,6 +248,28 @@ const Analytics = () => {
         setShowCopy(false);
         setTimeout(() => setShowCopy(true), 1000);
     };
+
+    const device = [
+        {
+            label: 'Devices',
+            body: sourceDevice && <BarChart data={sourceDevice} />,
+        },
+    ];
+
+    const locations = [
+        {
+            label: 'Country',
+            body: sourceCountry && <BarChart data={sourceCountry} isLocation/>,
+        },
+        {
+            label: 'City',
+            body: sourceCity && <BarChart data={sourceCity} isLocation/>,
+        },
+        {
+            label: 'Region',
+            body: sourceRegion && <BarChart data={sourceRegion} isLocation/>
+        },
+    ];
 
     return (
         <>
@@ -422,15 +322,27 @@ const Analytics = () => {
                                 )}
                             </div>
                         </Container>
-                        <Container>
-                            Total Clicks : {linkInfo?.totalClicks}
+                        <Container className={style['clicks']}>
+                            <span style={{
+                                padding:'1rem'
+                            }}>Total Clicks : {linkInfo?.totalClicks}</span>
                             {timeStamp?.length && clicks?.length ? (
+
                                 <ClicksGraph
                                     categories={timeStamp}
                                     seriesData={clicks}
                                 />
                             ) : (
-                                <>No Data To show</>
+                                <div style={{
+                                    width:'100%',
+                                    height:"100%",
+                                    display:'flex',
+                                    alignContent: 'center',
+                                    justifyContent: 'center',
+                                    textAlign: 'center',
+                                    color:"var(--text-placeholder)",
+                                    fontSize:'small'
+                                }}>No Data To show</div>
                             )}
                         </Container>
                         <div className={style['link-data']}>

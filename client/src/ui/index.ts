@@ -10,6 +10,7 @@ import TextInput from "./TextInput";
 import ToolMenuWrapper, { ToolOptions } from "./ToolMenuWrapper";
 import { Loader, BarLoader, ColorLoader } from "./Loaders";
 import Container from "./Container";
+import BarChart from "./BarChart";
 
 export {
     Avatar,
@@ -27,5 +28,6 @@ export {
     BarLoader,
     TextArea,
     Container,
+    BarChart,
     ColorLoader
 }
