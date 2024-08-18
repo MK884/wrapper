@@ -11,7 +11,7 @@ import {
 import { country, GOOGLE_FAVICON_URL } from '../constant';
 import parse from 'node-html-parser';
 import he from 'he';
-import { Static, Url } from '../models';
+import { Static, Url, User } from '../models';
 import { UAParser } from 'ua-parser-js';
 import mongoose from 'mongoose';
 
@@ -389,6 +389,9 @@ const getAllShortUrlOfUser = asyncHandler(
                     $limit: docLimit,
                 },
                 {
+                    $sort: { clicks: -1 },
+                },
+                {
                     $project: {
                         statics: 0,
                     },
@@ -495,8 +498,11 @@ const editUrl = asyncHandler(async (req: CustomeRequest, res: Response) => {
     const bodyData =
         originalUrl || title || description || image || imageFileLocalPath;
 
-    if (!bodyData)
-        throw new ApiError(404, 'At least one fieled must be provided');
+        
+        if (!bodyData)
+            throw new ApiError(404, 'At least one fieled must be provided');
+        
+    const isOnlyOriginalUrl = originalUrl && !title && !description && !image && !imageFileLocalPath;
 
     const project = await Url.findById(projectId);
 
@@ -531,7 +537,7 @@ const editUrl = asyncHandler(async (req: CustomeRequest, res: Response) => {
 
     if (
         project?.image?.startsWith('http://res.cloudinary.com/backendmk') &&
-        (imageFileLocalPath || image)
+        (imageFileLocalPath || image || isOnlyOriginalUrl)
     ) {
         // need to delete old photo from cloudinary
         try {
@@ -541,10 +547,21 @@ const editUrl = asyncHandler(async (req: CustomeRequest, res: Response) => {
         }
     }
 
+    if(isOnlyOriginalUrl){
+        // need to clear the title, description and image if exists
+        try {
+            
+            await Url.updateOne({ _id:projectId, title: { $exists:true}}, { $unset: { title: 1, description:1, image: 1} })
+
+        } catch (error) {
+            throw new ApiError(500, "Somthing wrong in clearing fileds", error)
+        }
+    }
+
     if (title) data.title = title;
     if (description) data.description = description;
 
-    data.isCustomized = title || description || image || imageFileLocalPath;
+    data.isCustomized = !!(title || description || image || imageFileLocalPath);
 
     try {
         const response = await Url.findByIdAndUpdate(projectId, data, {
@@ -559,6 +576,68 @@ const editUrl = asyncHandler(async (req: CustomeRequest, res: Response) => {
     }
 });
 
+const getTotalClicks = asyncHandler(
+    async (req: CustomeRequest, res: Response) => {
+        const userId = req?.user?._id;
+
+        if (!userId) throw new ApiError(404, 'failed to get userId');
+
+        const user = await User.findById(userId);
+
+        if (!user) throw new ApiError(404, 'User not found');
+
+        const response = await Url.aggregate([
+            {
+                $match: { owner: new mongoose.Types.ObjectId(userId) },
+            },
+            {
+                $lookup: {
+                    from: 'statics',
+                    localField: '_id',
+                    foreignField: 'projectId',
+                    as: 'statics',
+                    pipeline: [
+                        {
+                            $project: {
+                                updatedAt: 1,
+                                projectType: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $addFields: {
+                    clicks: {
+                        $size: '$statics',
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalClicks: { $sum: '$clicks' },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    clicks: '$totalClicks',
+                    projectType: 'Url',
+                },
+            },
+        ]);
+
+        if (!response.length) {
+            return res
+                .status(200)
+                .json(new ApiResponse(200, 'zero proejcts', { clicks: 0 }));
+        }
+
+        return res.status(200).json(new ApiResponse(200, 'success', response));
+    }
+);
+
 // https://ipinfo.io/${clientIp}?token=${IPINFO_API_KEY}
 
 export {
@@ -569,4 +648,5 @@ export {
     getAllStaticsByProjectId,
     deleteUrl,
     editUrl,
+    getTotalClicks,
 };

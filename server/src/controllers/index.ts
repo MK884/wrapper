@@ -1,5 +1,5 @@
 import { register, login, logout, refreshAccessToken, updateAvatar, updateUser, deleteUser } from "./user.controller";
-import { getMetaData, getAllShortUrlOfUser, getAllStaticsByProjectId, shortUrl, getShortLink, deleteUrl } from "./url.controller";
+import { getMetaData, getAllShortUrlOfUser, getAllStaticsByProjectId, shortUrl, getShortLink, deleteUrl, getTotalClicks } from "./url.controller";
 export {
     register,
     login,
@@ -13,5 +13,6 @@ export {
     getAllStaticsByProjectId,
     getShortLink, 
     shortUrl,
-    deleteUrl
+    deleteUrl,
+    getTotalClicks
 }
