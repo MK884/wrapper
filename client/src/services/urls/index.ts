@@ -77,10 +77,8 @@ const editUrl = async (
     projectId: string,
     axios: AxiosInstance
 ) => {
-
-    if(!projectId) return ;
-    console.log("request");
-    
+    if (!projectId) return;
+    console.log('request');
 
     const formData = new FormData();
 
@@ -94,7 +92,6 @@ const editUrl = async (
     if (originalUrl) formData.append('originalUrl', originalUrl);
 
     try {
-
         const response = await axios.patch(`/url/e/${projectId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -114,16 +111,24 @@ const editUrl = async (
         throw new Error('Unexpected Error in getShortUrl');
     }
 };
-const getAllShortUrl = async (
-    axios: AxiosInstance,
-    search: string | undefined
-) => {
+
+interface RequestProps {
+    axios: AxiosInstance;
+    search?: string;
+    limit?: number;
+}
+
+const getAllShortUrl = async ({
+    axios,
+    search = '',
+    limit = 10,
+}: RequestProps) => {
     if (!axios) return;
 
-    let searchTerm = search ?? '';
-
     try {
-        const response = await axios.get(`/url/get-all?search=${searchTerm}`);
+        const response = await axios.get(
+            `/url/get-all?search=${search}&limit=${limit}`
+        );
 
         return response?.data;
     } catch (error) {
@@ -179,6 +184,28 @@ const getStatsByProjectId = async (projectId: string, axios: AxiosInstance) => {
     }
 };
 
+const getTotalClicks = async (axios: AxiosInstance) => {
+    if (!axios) return;
+
+    try {
+        const response = await axios.get('/url/clicks');
+
+        return response?.data;
+    } catch (error) {
+        if (error instanceof AxiosError && error?.response) {
+            let serverError = error?.response?.data;
+
+            console.error('Server error in getTotalClicks ', serverError);
+
+            throw new Error(
+                serverError?.message || 'Server Error in getTotalClicks'
+            );
+        }
+        console.error('Unexpected error in getTotalClicks', error);
+        throw new Error('Unexpected error in getTotalClicks');
+    }
+};
+
 export {
     getMetaData,
     getShortUrl,
@@ -186,4 +213,5 @@ export {
     deleteUrlData,
     getStatsByProjectId,
     editUrl,
+    getTotalClicks,
 };

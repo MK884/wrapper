@@ -119,16 +119,25 @@ const QrModal = ({ closeModal, shortUrl, avatarUrl }: QrModalProps) => {
                         label="Copy Url"
                         Icon={copyUrl ? IoMdDoneAll  :MdOutlineContentCopy}
                         onclick={copyShortUrl}
+                        styles={{
+                            minWidth:'fit-content'
+                        }}
                     />
                     <Button
                         label="Copy Image"
                         Icon={copyImg ? IoMdDoneAll  : LuClipboardCopy}
                         onclick={copyImage}
+                        styles={{
+                            minWidth:'fit-content'
+                        }}
                     />
                     <Button
                         label="Download"
                         Icon={downloadImg ? IoMdDoneAll  : MdOutlineFileDownload}
                         onclick={downloadImage}
+                        styles={{
+                            minWidth:'fit-content'
+                        }}
                     />
                 </div>
                 <a ref={anchorRef} style={{ display: 'none' }} />

@@ -5,6 +5,7 @@ import Register from "./Register";
 import ThemeSwitch from "./ThemeSwitch";
 import { CardContainer } from "./CardContainer";
 import AnalyticsTabsCard from "./AnalyticsTabsCard";
+import ApexChart from "./ApexChart";
 export {
     Login,
     MainMenu,
@@ -12,5 +13,6 @@ export {
     ThemeSwitch,
     Register,
     CardContainer,
+    ApexChart,
     AnalyticsTabsCard
 }

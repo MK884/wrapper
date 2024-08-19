@@ -108,3 +108,21 @@ export interface CardContainerProps {
     image?: string;
     domain?:string
 }
+
+export type ChartType =
+| 'line'
+| 'area'
+| 'bar'
+| 'pie'
+| 'donut'
+| 'radialBar'
+| 'scatter'
+| 'bubble'
+| 'heatmap'
+| 'candlestick'
+| 'boxPlot'
+| 'radar'
+| 'polarArea'
+| 'rangeBar'
+| 'rangeArea'
+| 'treemap';

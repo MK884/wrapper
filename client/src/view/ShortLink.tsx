@@ -24,7 +24,7 @@ const ShortLink = () => {
         const getAllUrls = async () => {
             setIsLoading(true);
             try {
-                const response = await getAllShortUrl(privateAxios, search);
+                const response = await getAllShortUrl({axios:privateAxios, search});
                 setAllLinks(response?.data?.response);
 
                 console.log(response?.data?.response);

@@ -1,6 +1,5 @@
-import Chart from 'react-apexcharts';
 import React from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { usePrivateAxios } from '../services/api';
 import { getStatsByProjectId } from '../services/urls';
 import style from '../styles/analytics/analytics.module.scss';
@@ -10,8 +9,7 @@ import { MdOutlineContentCopy } from 'react-icons/md';
 import { MdOutlineSubdirectoryArrowRight } from 'react-icons/md';
 import { IoMdDoneAll } from 'react-icons/io';
 import config from '../config';
-import { AnalyticsTabsCard } from '../components';
-import { ApexOptions } from 'apexcharts';
+import { AnalyticsTabsCard, ApexChart } from '../components';
 
 interface Stats {
     _id: string;
@@ -33,107 +31,33 @@ interface linkInfo {
     totalClicks: number;
 }
 
-
-const ClicksGraph = ({
-    seriesData,
-    categories,
-}: {
-    seriesData: Array<number>;
-    categories: Array<string>;
-}) => {
-    if (!seriesData?.length && !categories?.length) return;
-
-    const series = [
-        {
-            name: 'Clicks',
-            data: seriesData,
-        },
-    ];
-
-    const options: ApexOptions = {
-        grid: {
-            show: false,
-        },
-        chart: {
-            height: 350,
-            type: 'area',
-            toolbar: {
-                show: true,
-
-                tools: {
-                    download: true,
-                    selection: false,
-                    zoom: false,
-                    zoomin: false,
-                    zoomout: false,
-                    pan: false,
-                    reset: false,
-                },
-            },
-        },
-        dataLabels: {
-            enabled: false,
-        },
-        stroke: {
-            curve: 'smooth',
-        },
-        xaxis: {
-            type: 'category',
-            categories: categories,
-            labels: {
-                style: {
-                    colors: 'var(--text-placeholder)',
-                },
-               show: false,
-            },
-        },
-        yaxis: {
-            stepSize: 1,
-            forceNiceScale: true,
-            labels: {
-                style: {
-                    colors: 'var(--text-placeholder)',
-                },
-            },
-        },
-        // tooltip: {
-        //     x: {
-        //         formatter: (val) => {
-        //             let localTime = new Date(val).toLocaleString('GB-en', { day:'2-digit', month:'2-digit', year: '2-digit', hour:'2-digit', minute:'2-digit' });
-        //             return localTime;
-        //         }
-        //     },
-        // },
-    };
-
-    return (
-        <>
-            <Chart options={options} series={series} type="area" height={350} />
-        </>
-    );
-};
-
-
 const Analytics = () => {
     const { projectId } = useParams();
 
     const privateAxios = usePrivateAxios();
 
     const [linkInfo, setLinkInfo] = React.useState<linkInfo>();
-    const [timeStamp, setTimeStamp] = React.useState<Array<string> | null>(null);
-    const [sourceDevice, setSourceDevice] = React.useState< {[key:string]:number} | null>(null);
-    const [sourceCountry, setSourceCountry] = React.useState< {[key:string]:number} | null>(null);
-    const [sourceCity, setSourceCity] = React.useState< {[key:string]:number} | null>(null);
-    const [sourceRegion, setSourceRegion] = React.useState< {[key:string]:number} | null>(null);
+    const [timeStamp, setTimeStamp] = React.useState<Array<string> | null>(
+        null
+    );
+    const [sourceDevice, setSourceDevice] = React.useState<{
+        [key: string]: number;
+    } | null>(null);
+    const [sourceCountry, setSourceCountry] = React.useState<{
+        [key: string]: number;
+    } | null>(null);
+    const [sourceCity, setSourceCity] = React.useState<{
+        [key: string]: number;
+    } | null>(null);
+    const [sourceRegion, setSourceRegion] = React.useState<{
+        [key: string]: number;
+    } | null>(null);
     const [clicks, setClicks] = React.useState<Array<number> | null>(null);
     const [ShowCopy, setShowCopy] = React.useState<boolean>(true);
 
-    
-    
-
     const prepareStats = (stats: Stats[]) => {
         if (!stats?.length) return;
-        
+
         const devices: { [key: string]: number } = {};
         const countrys: { [key: string]: number } = {};
         const citys: { [key: string]: number } = {};
@@ -184,7 +108,13 @@ const Analytics = () => {
             let createdAt = item?.createdAt;
 
             if (createdAt) {
-                let localTime = new Date(createdAt).toLocaleString('GB-en', { day:'2-digit', month:'2-digit', year: '2-digit', hour:'2-digit', minute:'2-digit' })
+                let localTime = new Date(createdAt).toLocaleString('GB-en', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                });
 
                 if (timeClicks[localTime]) {
                     timeClicks[localTime] += 1;
@@ -198,22 +128,19 @@ const Analytics = () => {
             setClicks(Object.values(timeClicks));
         }
 
-
-        if(Object.keys(devices).length){
+        if (Object.keys(devices).length) {
             setSourceDevice(devices);
         }
-        if(Object.keys(countrys).length){
+        if (Object.keys(countrys).length) {
             setSourceCountry(countrys);
         }
-        if(Object.keys(citys).length){
+        if (Object.keys(citys).length) {
             setSourceCity(citys);
         }
-        if(Object.keys(regions).length){
+        if (Object.keys(regions).length) {
             setSourceRegion(regions);
         }
-
     };
-
 
     React.useEffect(() => {
         const getStats = async () => {
@@ -259,15 +186,15 @@ const Analytics = () => {
     const locations = [
         {
             label: 'Country',
-            body: sourceCountry && <BarChart data={sourceCountry} isLocation/>,
+            body: sourceCountry && <BarChart data={sourceCountry} isLocation />,
         },
         {
             label: 'City',
-            body: sourceCity && <BarChart data={sourceCity} isLocation/>,
+            body: sourceCity && <BarChart data={sourceCity} isLocation />,
         },
         {
             label: 'Region',
-            body: sourceRegion && <BarChart data={sourceRegion} isLocation/>
+            body: sourceRegion && <BarChart data={sourceRegion} isLocation />,
         },
     ];
 
@@ -323,26 +250,39 @@ const Analytics = () => {
                             </div>
                         </Container>
                         <Container className={style['clicks']}>
-                            <span style={{
-                                padding:'1rem'
-                            }}>Total Clicks : {linkInfo?.totalClicks}</span>
+                            <span
+                                style={{
+                                    padding: '1rem',
+                                }}
+                            >
+                                Total Clicks : {linkInfo?.totalClicks}
+                            </span>
                             {timeStamp?.length && clicks?.length ? (
-
-                                <ClicksGraph
+                                <ApexChart
                                     categories={timeStamp}
-                                    seriesData={clicks}
+                                    series={[
+                                        {
+                                            name: 'Clicks',
+                                            data: clicks,
+                                        },
+                                    ]}
+                                    type="area"
                                 />
                             ) : (
-                                <div style={{
-                                    width:'100%',
-                                    height:"100%",
-                                    display:'flex',
-                                    alignContent: 'center',
-                                    justifyContent: 'center',
-                                    textAlign: 'center',
-                                    color:"var(--text-placeholder)",
-                                    fontSize:'small'
-                                }}>No Data To show</div>
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        display: 'flex',
+                                        alignContent: 'center',
+                                        justifyContent: 'center',
+                                        textAlign: 'center',
+                                        color: 'var(--text-placeholder)',
+                                        fontSize: 'small',
+                                    }}
+                                >
+                                    No Data To show
+                                </div>
                             )}
                         </Container>
                         <div className={style['link-data']}>

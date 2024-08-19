@@ -5,19 +5,18 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    h1{
+    h1 {
         text-align: center;
         font-size: 2vmax;
     }
     color: var(--text-defualt);
     padding: 10px;
     .performance {
-        
+        gap: 1rem;
         padding: 5rem 8rem;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        min-width: 80%;
     }
     h6 {
         font-size: 1.2vmax;
@@ -25,58 +24,74 @@
     .top-project {
         display: flex;
         flex-direction: column;
-        min-width: 50%;
+        flex: 1;
         gap: 0.5rem;
-
-        
+    }
+    .analytics {
+        flex: 0 0 30%;
+        .body {
+            margin-top: 0.5rem;
+            height: calc(100% - (0.6rem + 1.2vmax));
+        }
+    }
+    .short-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-inline:8rem;
+        padding-bottom: 5rem ;
+        width: 100%;
     }
 }
 
-
-
-@include md{
-    .home{
-        .performance{
+@include md {
+    .home {
+        .performance {
+            padding: 1rem;
+            flex-direction: column-reverse;
+        }
+    }
+}
+@include sm {
+    .home {
+        .performance {
             padding: 1rem;
             flex-direction: column-reverse;
             gap: 1rem;
         }
+        .short-links{
+            padding-inline: 1rem;
+        }
     }
 }
-@include sm{
-    .home{
-        .performance{
+@include xs {
+    .home {
+        .performance {
             padding: 1rem;
             flex-direction: column-reverse;
-            gap: 1rem;
+        }
+        .short-links{
+            padding-inline: 1rem;
         }
     }
 }
-@include xs{
-    .home{
-        .performance{
+@include lg {
+    .home {
+        .performance {
             padding: 1rem;
-            flex-direction: column-reverse;
-            gap: 1rem;
+        }
+        .short-links{
+            padding-inline: 1rem;
         }
     }
 }
-@include lg{
-    .home{
-        .performance{
+@include xl {
+    .home {
+        .performance {
             padding: 1rem;
-           
-            gap: 1rem;
+        }
+        .short-links{
+            padding-inline: 1rem;
         }
     }
 }
-@include xl{
-    .home{
-        .performance{
-            padding: 1rem;
-           
-            gap: 1rem;
-        }
-    }
-}
-

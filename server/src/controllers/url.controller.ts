@@ -386,10 +386,10 @@ const getAllShortUrlOfUser = asyncHandler(
                     $skip: currentPage * docLimit,
                 },
                 {
-                    $limit: docLimit,
+                    $sort: { clicks: -1 },
                 },
                 {
-                    $sort: { clicks: -1 },
+                    $limit: docLimit,
                 },
                 {
                     $project: {
