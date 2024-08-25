@@ -135,8 +135,7 @@ const getMetaData = asyncHandler(async (req: CustomeRequest, res: Response) => {
 
     const domainIcon = `${GOOGLE_FAVICON_URL}${domain}`;
 
-    const title = titleTag;
-    MetaData['og:title'] || MetaData['title'] || MetaData['twitter:title'];
+    const title = titleTag || MetaData['og:title'] || MetaData['title'] || MetaData['twitter:title'];
 
     const description =
         MetaData['og:description'] ||
