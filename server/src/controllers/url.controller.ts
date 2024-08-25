@@ -33,11 +33,13 @@ const getDomainOfUrl = (urlString: string) => {
         const url = new URL(urlString);
         const host = url.hostname;
         if (host === 'youtu.be') return 'youtube.com';
-        if (host.endsWith('.vercel.app')) return 'vercel.app';
         if (host === 'raw.githubusercontent.com') return 'github.com';
-        if (host === 'images.unsplash.com') return 'unsplash.com';
-        if (host === 'projects.100xdevs.com') return '100xdevs.com';
-        if (host === 'app.eraser.io') return 'eraser.io';
+        const subParts = host.split('.');
+        if(subParts.length > 2){
+            // means it is a subdomain like projects.100xdev.com so we need to return last to part
+            return subParts.slice(-2).join('.');
+        }
+        // else it is normal domain return the host
         return host;
     } catch (error) {
         console.error(error);
