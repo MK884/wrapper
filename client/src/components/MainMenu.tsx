@@ -12,7 +12,7 @@ import React from 'react';
 
 const MainMenuData = [
     {
-        label: 'Dashboard',
+        label: 'Home',
         icon: MdOutlineDashboardCustomize,
         path: '/',
     },

@@ -23,9 +23,7 @@ const Home = () => {
     const [Projects, setProjects] = React.useState<Array<LinkResponse> | []>(
         []
     );
-    const [Clicks, setClicks] = React.useState<
-        Array<ProjectsClicks> | []
-    >([]);
+    const [Clicks, setClicks] = React.useState<Array<ProjectsClicks> | []>([]);
 
     React.useEffect(() => {
         const fetchData = async () => {
@@ -44,9 +42,6 @@ const Home = () => {
 
         fetchData();
     }, []);
-
-
-    
 
     return (
         <div className={style['home']}>
@@ -119,26 +114,32 @@ const Home = () => {
                 </div>
             </div>
             <div className={style['short-links']}>
-                    <h6>Short Link</h6>
-                    
+                <h6>Short Link</h6>
+                <div
+                    style={{
+                        maskImage:
+                            'linear-gradient(rgb(0,0,0), rgb(0, 0, 0, .2))',
+                    }}
+                >
                     {Projects.length ? (
-                        <>
-                       { Projects.slice(0,3).map((link) => (
+                        Projects.slice(0, 3).map((link) => (
                             <CardContainer key={link._id} {...link} />
-                        ))}
-                        <p style={{
-                            textAlign: 'center',
-                            color:'var(--text-brand)',
-                            cursor: 'pointer',
-                            fontSize:'small'
-                        }}
-                            onClick={()=>navigate('/sl')}
-                        >See All</p>
-                        </>
+                        ))
                     ) : (
                         <div>No Data to Show</div>
                     )}
-                   
+                </div>
+                <p
+                    style={{
+                        textAlign: 'center',
+                        color: 'var(--text-brand)',
+                        cursor: 'pointer',
+                        fontSize: 'small',
+                    }}
+                    onClick={() => navigate('/sl')}
+                >
+                    See All
+                </p>
             </div>
         </div>
     );
