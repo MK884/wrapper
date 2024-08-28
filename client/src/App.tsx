@@ -13,6 +13,7 @@ import {
     Setting,
     ShortLink,
     UserStart,
+    Wrapper,
 } from './view';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -42,13 +43,11 @@ const RouteApp = () => {
                         <Route path="/p/:projectId" element={<Analytics />} />
                         <Route path="/create-new" element={<CreatNew />} />
                         <Route path="/sl" element={<ShortLink />} />
-                        <Route
-                            path="/create-sl"
-                            element={<CreateShortLink />}
-                        />
+                        <Route path="/create-sl" element={<CreateShortLink />}  />
                         <Route path="/help" element={<Help />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/setting" element={<Setting />} />
+                        <Route path="/create-wrapper" element={<Wrapper />} />
                     </Route>
                 </Route>
             </Routes>

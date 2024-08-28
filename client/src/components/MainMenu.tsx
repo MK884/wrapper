@@ -48,7 +48,7 @@ const MainMenu = () => {
     return (
         <div>
             <ToolMenuWrapper isMenuVisible={isMenuVisible} setIsMenuVisible={setIsMenuVisible}>
-                <ToolOptions label="Search" Icon={RiFindReplaceLine} />
+                {/* <ToolOptions label="Search" Icon={RiFindReplaceLine} /> */}
                 {MainMenuData.map((item, idx) => (
                     <ToolOptions
                         label={item?.label}

@@ -8,6 +8,7 @@ import Setting from "./Setting";
 import UserStart from "./UserStart";
 import ShortLink from "./ShortLink";
 import Analytics from "./Analytics";
+import Wrapper from "./Wrapper";
 
 export {
     About,
@@ -19,5 +20,6 @@ export {
     Redirect,
     Setting,
     Analytics,
+    Wrapper,
     ShortLink
 }
