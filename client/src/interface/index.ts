@@ -18,6 +18,7 @@ export interface TextInputProps {
     fullWidth?: boolean;
     value?: string;
     name?: string;
+    customeClass?: string;
     [key: string]: any;
 }
 export interface TextTextAreaProps {

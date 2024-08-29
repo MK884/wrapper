@@ -43,8 +43,6 @@ const MainMenu = () => {
     const location = useLocation();
     const [ isMenuVisible, setIsMenuVisible ] = React.useState<boolean>(false);
 
-
-
     return (
         <div>
             <ToolMenuWrapper isMenuVisible={isMenuVisible} setIsMenuVisible={setIsMenuVisible}>

@@ -54,8 +54,6 @@ export const DeleteConfirmation = ({
 
     React.useEffect(() => {
         handleDisable();
-
-        return () => handleDisable();
     }, [input]);
 
     return (

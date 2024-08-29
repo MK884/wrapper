@@ -26,7 +26,7 @@ const Avatar = ({
     styles = {},
     onClick,
     className='',
-    string = 'Test',
+    string="No avatar"
 }: AvatarProps) => {
     return (
         <div
@@ -37,7 +37,7 @@ const Avatar = ({
             {src ? (
                 <img src={src} alt={alt}  />
             ) : (
-                string.toUpperCase().charAt(0)
+                string?.toUpperCase().charAt(0)
             )}
         </div>
     );

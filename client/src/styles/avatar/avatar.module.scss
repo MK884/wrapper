@@ -20,7 +20,7 @@ $avatar-size-lg: 62px;
     overflow: hidden;
     color: #dadada;
     cursor: pointer;
-    background-color: rgb(66, 53, 34);
+    background-color: var(--background-defualt);
     display: flex;
     align-items: center;
     justify-content: center;
