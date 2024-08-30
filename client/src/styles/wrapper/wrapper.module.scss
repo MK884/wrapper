@@ -115,25 +115,38 @@
         gap: 10px;
         min-width: 600px;
         align-items: center;
-        .box{
+        .link{
             width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: var(--background-defualt);
-            border: 1px solid var(--border-weak);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            &:hover{
-                border: 1px solid var(--border-primary);
-            }
-            .inputs{
-                width: 100%;
+            position: relative;
+            .box{
+                padding: 10px;
+                border-radius: 8px;
+                background-color: var(--background-defualt);
+                border: 1px solid var(--border-weak);
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                &:hover{
+                    border: 1px solid var(--border-primary);
+                }
+                .inputs{
+                    width: 100%;
                 .link_title{
                     all: unset;
                     width: 100%;
                 }
             }
         }
+        .delete_link{
+            @include action(8px);
+            position: absolute;
+            top: -15px;
+            left: -10px;
+            display: none;
+        }
+        &:hover .delete_link{
+            display: block;
+        }
+    }
     }
 }
