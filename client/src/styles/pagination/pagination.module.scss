@@ -1,0 +1,35 @@
+@import '../colors';
+
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    .pg__btn {
+        border: 1px solid var(--border-default);
+        height: 2rem;
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: border hover 0.2s linear;
+        border-radius: 6px;
+        font-size: small;
+        font-weight: 600;
+        color: #dadada;
+        background-color: var(--page-weak);
+        &:disabled, &[disabled]{
+            pointer-events: none;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        &.active {
+            height: 2.4rem;
+            background-color: var(--button-primary);
+            border: 1px solid var(--border-primary);
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 1px rgba(0, 0, 0, 0.06));
+        }
+    }
+}

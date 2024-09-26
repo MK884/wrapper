@@ -116,18 +116,20 @@ interface RequestProps {
     axios: AxiosInstance;
     search?: string;
     limit?: number;
+    page?:number
 }
 
 const getAllShortUrl = async ({
     axios,
     search = '',
-    limit = 10,
+    limit = 8,
+    page=0
 }: RequestProps) => {
     if (!axios) return;
 
     try {
         const response = await axios.get(
-            `/url/get-all?search=${search}&limit=${limit}`
+            `/url/get-all?search=${search}&limit=${limit}&page=${page}`
         );
 
         return response?.data;

@@ -1,6 +1,6 @@
 import React from 'react';
 import style from '../styles/shortLink/shortLink.module.scss';
-import { CardContainer } from '../components';
+import { CardContainer, Pagination } from '../components';
 import { Button, Loader, TextInput } from '../ui';
 import { FaPlus } from 'react-icons/fa';
 import { IoMdRefresh } from 'react-icons/io';
@@ -18,17 +18,23 @@ const ShortLink = () => {
     const [allLinks, setAllLinks] = React.useState<LinkResponse[] | []>([]);
     const [search, setSearch] = React.useState<string>();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [activePage, setActivePage] = React.useState<number>(0);
+    const [totalPage, setTotalPage] = React.useState<number | null>(null);
     const [refresh, forceRefresh] = React.useState(false);
 
     React.useEffect(() => {
         const getAllUrls = async () => {
             setIsLoading(true);
             try {
-                const response = await getAllShortUrl({axios:privateAxios, search});
+                const response = await getAllShortUrl({
+                    axios: privateAxios,
+                    search,
+                    page: activePage,
+                });
                 setAllLinks(response?.data?.response);
-
-                console.log(response?.data?.response);
-                console.log(response?.data?.total);
+                const total = Math.round((response?.data?.total) / 8)
+                 
+                setTotalPage(total);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -39,7 +45,7 @@ const ShortLink = () => {
         setTimeout(() => {
             getAllUrls();
         }, 1500);
-    }, [search, refresh]);
+    }, [search, refresh, activePage]);
 
     return (
         <div className={style['wrapper']}>
@@ -86,11 +92,20 @@ const ShortLink = () => {
                     <Loader />
                 </div>
             ) : allLinks.length ? (
-                <div className={style['body']}>
-                    {allLinks.map((link) => (
-                        <CardContainer key={link._id} {...link} />
-                    ))}
-                </div>
+                <>
+                    <div className={style['body']}>
+                        {allLinks?.map((link) => (
+                            <CardContainer key={link._id} {...link} />
+                        ))}
+                    </div>
+                    {totalPage && totalPage > 1 && <div>
+                        <Pagination
+                            activePage={activePage}
+                            setActivePage={setActivePage}
+                            tottalPage={totalPage}
+                        />
+                    </div>}
+                </>
             ) : (
                 <div>No Data to Show</div>
             )}
