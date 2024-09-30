@@ -5,7 +5,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import path from 'path';
 
 const app = express();
-const allowedHost = process.env.ALLOWED_ORIGIN || 'http://localhost:5173';
+const allowedHost = process.env.ALLOWED_ORIGIN;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
