@@ -1,8 +1,7 @@
-import style from '../styles/create-new/createNew.module.scss';
-import Container from '../ui/Container';
 import { FaLink } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { PiSpinnerBallDuotone } from "react-icons/pi";
+import style from '../styles/create-new/createNew.module.scss';
+import Container from '../ui/Container';
 
 
 const projects = [

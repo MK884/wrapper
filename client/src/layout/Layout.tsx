@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
+import styles from "../styles/layout/layout.module.scss";
 import Header from './Header';
-import styles from "../styles/layout/layout.module.scss"
-import { Modal } from '../ui';
 
 const Layout = () => {
     return (

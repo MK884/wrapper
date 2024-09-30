@@ -1,13 +1,11 @@
-import { useUser } from '../features/auth/authSlice';
-import { useAppSelector } from '../app/hook';
-import { ApexChart, CardContainer } from '../components';
-import style from '../styles/home/home.module.scss';
 import React from 'react';
-import { usePrivateAxios } from '../services/api';
-import { CardContainerProps } from '../interface';
-import { getAllShortUrl, getTotalClicks } from '../services/urls';
-import { Button, Container } from '../ui';
 import { useNavigate } from 'react-router-dom';
+import { ApexChart, CardContainer } from '../components';
+import { CardContainerProps } from '../interface';
+import { usePrivateAxios } from '../services/api';
+import { getAllShortUrl, getTotalClicks } from '../services/urls';
+import style from '../styles/home/home.module.scss';
+import { Container } from '../ui';
 
 interface LinkResponse extends CardContainerProps {}
 interface ProjectsClicks {
@@ -16,7 +14,7 @@ interface ProjectsClicks {
 }
 
 const Home = () => {
-    const user = useAppSelector(useUser);
+    // const user = useAppSelector(useUser);
     const privateAxios = usePrivateAxios();
     const navigate = useNavigate();
 

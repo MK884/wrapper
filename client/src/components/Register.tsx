@@ -1,14 +1,13 @@
-import React, { FormEventHandler } from 'react';
-import style from '../styles/getStart/register.module.scss';
-import { z } from 'zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, ImageInput, PasswordInput, TextInput } from '../ui';
-import { login, register as registerUser } from '../services/user';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { z } from 'zod';
 import { useAppDispatch } from '../app/hook';
 import { setUser } from '../features/auth/authSlice';
-import { toast } from 'react-toastify';
+import { login, register as registerUser } from '../services/user';
+import style from '../styles/getStart/register.module.scss';
+import { Button, ImageInput, PasswordInput, TextInput } from '../ui';
 
 const schema = z.object({
     fullName: z.string().min(3).trim(),

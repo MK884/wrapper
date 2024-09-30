@@ -1,24 +1,21 @@
-import { Avatar, Button, Divider, Loader, Modal, ToolOptions } from '../ui';
+import { CardContainerProps } from 'interface';
 import React from 'react';
-import { FaRegTrashAlt } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { MdOutlineContentCopy } from 'react-icons/md';
-import { IoAnalytics, IoClose } from 'react-icons/io5';
-import { FaRegEdit } from 'react-icons/fa';
-import { IoQrCodeOutline } from 'react-icons/io5';
+import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
 import { IoMdDoneAll } from 'react-icons/io';
+import { IoAnalytics, IoClose, IoQrCodeOutline } from 'react-icons/io5';
+import { LuClipboardCopy } from 'react-icons/lu';
+import { MdOutlineContentCopy, MdOutlineFileDownload } from 'react-icons/md';
+import { SiGoogleanalytics } from "react-icons/si";
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import config from '../config';
 import { usePrivateAxios } from '../services/api';
 import { deleteUrlData } from '../services/urls';
-import { toast } from 'react-toastify';
-import { MdOutlineFileDownload } from 'react-icons/md';
-import { LuClipboardCopy } from 'react-icons/lu';
-import { generateQrCod } from '../utils';
-import Container from '../ui/Container';
-import { SiGoogleanalytics } from "react-icons/si";
 import style from '../styles/cardContainer/cardContainer.module.scss';
-import { CardContainerProps } from 'interface';
-import config from '../config';
+import { Avatar, Button, Divider, Loader, Modal, ToolOptions } from '../ui';
+import Container from '../ui/Container';
+import { generateQrCod } from '../utils';
 
 interface QrModalProps {
     closeModal: Function;
@@ -201,13 +198,8 @@ export const CardContainer = (props: CardContainerProps) => {
         _id,
         clicks = 0,
         domainIcon,
-        isCustomized,
         shortUrl,
-        description,
         domain,
-        image,
-        originalUrl,
-        title,
         updatedAt,
     } = props;
 

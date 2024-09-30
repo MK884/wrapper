@@ -1,11 +1,11 @@
 import React from 'react';
+import { BiSolidPencil } from 'react-icons/bi';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { FiUpload } from 'react-icons/fi';
+import { MdDone } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 import styles from '../styles/wrapper/wrapper.module.scss';
 import { Avatar, TextInput } from '../ui';
-import { FiUpload } from 'react-icons/fi';
-import { BiSolidPencil } from 'react-icons/bi';
-import { MdDone } from 'react-icons/md';
-import { FaRegTrashAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import { isValidHttpsUrl } from '../utils';
 
 interface linksState {
@@ -53,7 +53,7 @@ const Wrapper = () => {
     const [isAddLink, setIsAddLink] = React.useState<boolean>(false);
     const [avatar, setAvatar] = React.useState<string | null>(null);
     const [link, setLink] = React.useState<string>('');
-    const [linkError, setLinkError] = React.useState<boolean>(false);
+    const [_, setLinkError] = React.useState<boolean>(false);
 
     const fileRef = React.useRef<HTMLInputElement>(null);
     const linkRef = React.useRef<HTMLInputElement>(null);
@@ -79,10 +79,10 @@ const Wrapper = () => {
     React.useEffect(() => {
         if (isAddLink) linkRef?.current?.focus();
 
-        const hideLinkInput = (e: MouseEvent) => {
-            if (linkRef?.current?.contains(e.target as Node)) return;
-            isAddLink && setIsAddLink(false);
-        };
+        // const hideLinkInput = (e: MouseEvent) => {
+        //     if (linkRef?.current?.contains(e.target as Node)) return;
+        //     isAddLink && setIsAddLink(false);
+        // };
 
         // document.addEventListener('click',hideLinkInput);
 
@@ -183,7 +183,7 @@ const Wrapper = () => {
                 />
             </div>
             <div className={styles['links']}>
-                {linksState?.map((link, idx) => (
+                {linksState?.map((link) => (
                     <div className={styles['link']}>
                         <div
                             key={link.projectId}

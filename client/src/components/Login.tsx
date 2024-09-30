@@ -1,14 +1,13 @@
-import React from 'react';
-import style from '../styles/getStart/login.module.scss';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, PasswordInput, TextInput } from '../ui';
-import { login } from '../services/user';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { z } from 'zod';
 import { useAppDispatch } from '../app/hook';
 import { setUser } from '../features/auth/authSlice';
-import { toast } from 'react-toastify';
+import { login } from '../services/user';
+import style from '../styles/getStart/login.module.scss';
+import { Button, PasswordInput, TextInput } from '../ui';
 
 const schema = z.object({
     email: z.string().email(),

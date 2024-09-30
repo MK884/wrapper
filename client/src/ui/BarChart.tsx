@@ -1,10 +1,8 @@
-import React from 'react';
-import style from '../styles/chart/barChart.module.scss';
-import { FaDesktop } from 'react-icons/fa';
 import { CiMobile1 } from 'react-icons/ci';
+import { FaDesktop } from 'react-icons/fa';
 import { IoTabletLandscapeOutline } from 'react-icons/io5';
 import { LuTv } from 'react-icons/lu';
-import { CountryNameToCode } from '../constant';
+import style from '../styles/chart/barChart.module.scss';
 
 type BarColors = 'green' | 'yellow' | 'purple' | 'pink' | 'accent' | 'blue';
 const color: BarColors[] = [
@@ -40,7 +38,7 @@ const BarChart = ({
         <div className={style['wrapper']}>
             {isLocation
                 ? Object.keys(data).map((item, idx) => {
-                      let randomIdx = Math.floor(Math.random() * 6);
+                    //   let randomIdx = Math.floor(Math.random() * 6);
                       
                       return (
                           <>
@@ -67,7 +65,7 @@ const BarChart = ({
                       );
                   })
                 : Object.keys(data).map((item, idx) => {
-                      let randomIdx = Math.floor(Math.random() * 6);
+                    //   let randomIdx = Math.floor(Math.random() * 6);
                       return (
                           <>
                               <div
