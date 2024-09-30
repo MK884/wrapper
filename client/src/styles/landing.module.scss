@@ -87,12 +87,18 @@
             font-weight: 800;
             font-size: 4rem;
             text-transform: uppercase;
+
+            // animation
+            animation: fade-up 0.8s;
         }
         p {
             width: 25%;
             font-weight: 200;
             font-size: 18px;
             color: #948b8b;
+
+            // animation
+            animation: fade-up 1s;
         }
         div {
             display: flex;
@@ -118,6 +124,9 @@
             font-weight: 600;
             color: #dadada;
             background-color: #121212;
+
+            // animation
+            animation: fade-up 1.2s;
 
             &:active {
                 border: 1.5px solid #646cff;
@@ -152,6 +161,10 @@
                 font-weight: 600;
                 color: #f0f8ff;
                 margin-bottom: 1rem;
+
+                // animation
+                // animation: fade-out linear;
+                // animation-range: entry 0%;
             }
             p {
                 color: #9ba3b4;
@@ -172,6 +185,11 @@
         transform: skewX(8deg);
         cursor: pointer;
         transition: border 0.1s linear;
+
+        // animation
+        //  animation: fade-out .6s linear;
+        //  animation-timeline: view();
+        //  animation-range: entry 30%;
         &:hover {
             border: 1.5px solid #646cff;
         }
@@ -243,6 +261,14 @@
                     justify-content: center;
                 }
             }
+        }
+    }
+    nav{
+        img{
+            mix-blend-mode: darken;
+            height: 3rem;
+            width: 8rem;
+            object-fit: cover;
         }
     }
 }
@@ -363,5 +389,28 @@
                 flex-direction: row-reverse;
             }
         }
+    }
+}
+
+// animation
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 0;
+        scale: 0.2;
+    }
+    to {
+        opacity: 1;
+        scale: 1;
     }
 }

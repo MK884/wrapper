@@ -4,7 +4,7 @@ import styles from '../styles/landing.module.scss';
 import { useNavigate } from 'react-router-dom';
 
 import { FaGithub } from 'react-icons/fa';
-import { showcaseData, technologies } from 'constant';
+import { showcaseData, technologies } from '../constant';
 
 function LandingView() {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ function LandingView() {
             <main className={styles.main}>
                 <header>
                     <nav>
-                        <h4 className={styles['site-title']}>wrapper</h4>
+                        <img src="./logo.png" alt="wrapper" />
                         <button onClick={goToLogin}>Get Started</button>
                     </nav>
                 </header>

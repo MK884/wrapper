@@ -12,12 +12,13 @@ const projects = [
         path: '/create-sl',
         icon: <FaLink />,
     },
-    {
-        title: 'Wrapper',
-        description: 'Wrapper all your Link into one',
-        path: '/create-wrapper',
-        icon: <PiSpinnerBallDuotone />,
-    },
+    // TODO: development
+    // {
+    //     title: 'Wrapper',
+    //     description: 'Wrapper all your Link into one',
+    //     path: '/create-wrapper',
+    //     icon: <PiSpinnerBallDuotone />,
+    // },
 ];
 
 const CreatNew = () => {
