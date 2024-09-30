@@ -14,6 +14,7 @@ import he from 'he';
 import { Static, Url, User } from '../models';
 import { UAParser } from 'ua-parser-js';
 import mongoose from 'mongoose';
+import axios from 'axios';
 
 const isValidUrl = (url: string): boolean => {
     try {
@@ -290,26 +291,26 @@ const shortUrl = asyncHandler(async (req: Request, res: Response) => {
     let ipInfo;
 
     // TODO: clear comments whenever project ready to use in production, for development use dumy data
-    // try {
-    //     ipInfo = await axios.get(
-    //         `https://ipinfo.io/?token=${process.env.IPINFO_API_KEY}`
-    //     );
-    //     console.log(ipInfo);
+    try {
+        ipInfo = await axios.get(
+            `https://ipinfo.io/?token=${process.env.IPINFO_API_KEY}`
+        );
+        console.log(ipInfo);
 
-    // } catch (error) {
-    //     console.error(error);
-    // }
+    } catch (error) {
+        console.error(error);
+    }
 
     // // just setting empty if not found to avoid any error
-    // const clientCity = ipInfo?.data?.city ?? '';
-    // const clientRegion = ipInfo?.data?.region ?? '';
-    // const clientCountryCode = ipInfo?.data?.country ?? ''; //here we get only country code need to convert it into full name;
-    // const clientCountryName = getCountryNameByCode(clientCountryCode);
-
-    const clientCity = 'Mumbai';
-    const clientRegion = 'Maharashtra';
-    const clientCountryCode = 'IN';
+    const clientCity = ipInfo?.data?.city ?? 'Mumbai';
+    const clientRegion = ipInfo?.data?.region ?? 'Maharashtra';
+    const clientCountryCode = ipInfo?.data?.country ?? 'IN'; //here we get only country code need to convert it into full name;
     const clientCountryName = getCountryNameByCode(clientCountryCode);
+
+    // const clientCity = 'Mumbai';
+    // const clientRegion = 'Maharashtra';
+    // const clientCountryCode = 'IN';
+    // const clientCountryName = getCountryNameByCode(clientCountryCode);
 
     try {
         await Static.create({
