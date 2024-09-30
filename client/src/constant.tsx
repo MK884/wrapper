@@ -1,3 +1,10 @@
+import { TbBrandTypescript } from 'react-icons/tb';
+import { FaReact } from 'react-icons/fa';
+import { BsFiletypeScss } from 'react-icons/bs';
+import { TbBrandMongodb } from 'react-icons/tb';
+import { SiExpress } from 'react-icons/si';
+import { FaNodeJs } from 'react-icons/fa6';
+
 export const CountryNameToCode:{[key:string]:string} = {
     "bangladesh": "BD",
     "belgium": "BE",
@@ -250,3 +257,84 @@ export const CountryNameToCode:{[key:string]:string} = {
     "qatar": "QA",
     "mozambique": "MZ"
 };
+
+
+export const showcaseData = [
+    {
+        id: 1,
+        titel: 'Customized link preview',
+        description:
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae accusantium rerum mollitia dicta nesciunt nihil neque nostrum perspiciatis voluptates dolorum, suscipit  eum nobis fugiat aspernatur maiores? Esse vero odit dicta?',
+        imgSrc: './ss4.png',
+        alt: 'link preview',
+    },
+    {
+        id: 2,
+        titel: 'Better Analysis',
+        description:
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae accusantium rerum mollitia dicta nesciunt nihil neque nostrum perspiciatis voluptates dolorum, suscipit  eum nobis fugiat aspernatur maiores? Esse vero odit dicta?',
+        imgSrc: './ss2.png',
+        alt: 'analysis',
+    },
+    {
+        id: 3,
+        titel: 'Dashboard',
+        description:
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae accusantium rerum mollitia dicta nesciunt nihil neque nostrum perspiciatis voluptates dolorum, suscipit  eum nobis fugiat aspernatur maiores? Esse vero odit dicta?',
+        imgSrc: './ss1.png',
+        alt: 'dashboard',
+    },
+    {
+        id: 4,
+        titel: 'All your links at one place',
+        description:
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae accusantium rerum mollitia dicta nesciunt nihil neque nostrum perspiciatis voluptates dolorum, suscipit  eum nobis fugiat aspernatur maiores? Esse vero odit dicta?',
+        imgSrc: './ss3.png',
+        alt: 'links',
+    },
+];
+
+export const technologies = [
+    {
+        id: 1,
+        title: 'TypeScript',
+        icon: <TbBrandTypescript size={32} color="#646cff" />,
+        description:
+            'TypeScript extends JavaScript by adding types to the language. TypeScript speeds up your development experience',
+    },
+    {
+        id: 2,
+        title: 'React',
+        icon: <FaReact size={32} color="#646cff" />,
+        description:
+            'React is the library for web and native user interfaces. Build user interfaces out of individual pieces called components written in JavaScript.',
+    },
+    {
+        id: 3,
+        title: 'SCSS',
+        icon: <BsFiletypeScss size={32} color="#646cff" />,
+        description:
+            'CSS with superpowers - Sass is the most mature, stable, and powerful professional grade CSS extension language in the world.',
+    },
+    {
+        id: 4,
+        title: 'NodeJs',
+        icon: <FaNodeJs size={32} color="#646cff" />,
+        description:
+            "Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.",
+    },
+    {
+        id: 5,
+        title: 'Express',
+        icon: <SiExpress size={32} color="#646cff" />,
+        description:
+            'Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. APIs.',
+    },
+    {
+        id: 6,
+        title: 'MongoDB',
+        icon: <TbBrandMongodb size={32} color="#646cff" />,
+        description:
+            "MongoDB is a world's most popular document database. It stores data in a type of JSON format called BSON.",
+    },
+];

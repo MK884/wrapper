@@ -3,6 +3,9 @@ import React from 'react';
 import styles from '../styles/landing.module.scss';
 import { useNavigate } from 'react-router-dom';
 
+import { FaGithub } from 'react-icons/fa';
+import { showcaseData, technologies } from 'constant';
+
 function LandingView() {
     const navigate = useNavigate();
 
@@ -26,90 +29,53 @@ function LandingView() {
                             the control to elevate your online presence
                             effortlessly.
                         </p>
-                        <button onClick={goToLogin}>Get Started</button>
-                    </div>
-                </section>
-                <section>
-                    <div className={styles['section_2']}>
-                        <div className={styles['wrapper']}>
-                            <div className={styles['text']}>
-                                <h3>Customized link preview</h3>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. Quae accusantium rerum
-                                    mollitia dicta nesciunt nihil neque nostrum
-                                    perspiciatis voluptates dolorum, suscipit
-                                    eum nobis fugiat aspernatur maiores? Esse
-                                    vero odit dicta?
-                                </p>
-                            </div>
-                            <div className={`${styles.ss1} ${styles.image}`}>
-                                <img src="./ss4.png" alt="home page" />
-                            </div>
+                        <div>
+                            <a
+                                href="https://github.com/MK884/wrapper"
+                                target="_blank"
+                            >
+                                <button>
+                                    <FaGithub size={20} />
+                                    Star us on Github
+                                </button>
+                            </a>
+                            <button onClick={goToLogin}>Get Started</button>
                         </div>
                     </div>
                 </section>
-                <section>
-                <div className={styles['section_3']}>
-                        <div className={styles['wrapper']}>
-                            <div className={styles['text']}>
-                                <h3>Better Analysis</h3>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. Quae accusantium rerum
-                                    mollitia dicta nesciunt nihil neque nostrum
-                                    perspiciatis voluptates dolorum, suscipit
-                                    eum nobis fugiat aspernatur maiores? Esse
-                                    vero odit dicta?
-                                </p>
-                            </div>
-                            <div className={`${styles.ss2} ${styles.image}`}>
-                                <img src="./ss2.png" alt="home page" />
+                {showcaseData?.map((data) => (
+                    <section key={data?.id}>
+                        <div className={styles[`section_${data.id + 1}`]}>
+                            <div className={styles['wrapper']}>
+                                <div className={styles['text']}>
+                                    <h3>{data?.titel}</h3>
+                                    <p>{data?.description}</p>
+                                </div>
+                                <div
+                                    className={`${styles[`ss${data?.id + 1}`]} ${styles.image}`}
+                                >
+                                    <img src={data?.imgSrc} alt={data?.alt} />
+                                </div>
                             </div>
                         </div>
+                    </section>
+                ))}
+                <section className={styles.tech}>
+                    <h4>Tech Stack</h4>
+                    <p>
+                        Wrapper is built on MERN Stack. Some of technology are
+                        listed below
+                    </p>
+                    <div className={styles.box}>
+                        {technologies?.map((tech) => (
+                            <div className={styles.card} key={tech?.id}>
+                                <div>{tech?.icon}</div>
+                                <h3>{tech?.title}</h3>
+                                <p>{tech?.description}</p>
+                            </div>
+                        ))}
                     </div>
                 </section>
-                <section>
-                <div className={styles['section_4']}>
-                        <div className={styles['wrapper']}>
-                            <div className={styles['text']}>
-                                <h3>Dashboard</h3>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. Quae accusantium rerum
-                                    mollitia dicta nesciunt nihil neque nostrum
-                                    perspiciatis voluptates dolorum, suscipit
-                                    eum nobis fugiat aspernatur maiores? Esse
-                                    vero odit dicta?
-                                </p>
-                            </div>
-                            <div className={`${styles.ss3} ${styles.image}`}>
-                                <img src="./ss1.png" alt="home page" />
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <section>
-                <div className={styles['section_5']}>
-                        <div className={styles['wrapper']}>
-                            <div className={styles['text']}>
-                                <h3>All your links at one place</h3>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit. Quae accusantium rerum
-                                    mollitia dicta nesciunt nihil neque nostrum
-                                    perspiciatis voluptates dolorum, suscipit
-                                    eum nobis fugiat aspernatur maiores? Esse
-                                    vero odit dicta?
-                                </p>
-                            </div>
-                            <div className={`${styles.ss3} ${styles.image}`}>
-                                <img src="./ss3.png" alt="home page" />
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                
             </main>
         </>
     );
