@@ -7,7 +7,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "tsc -b && node dist/index.js",
         "dev": "set NODE_ENV=production && ts-node-dev src/index.ts",
-        "build":"npm install && tsc"
+        "build": "npm install && tsc"
     },
     "keywords": [],
     "author": "",
@@ -36,6 +36,7 @@
         "zod": "^3.23.8"
     },
     "devDependencies": {
+        "@types/bcrypt": "^5.0.2",
         "@types/cookie-parser": "^1.4.7",
         "@types/cors": "^2.8.17",
         "@types/ejs": "^3.1.5",
