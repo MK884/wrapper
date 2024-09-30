@@ -1,24 +1,24 @@
 import { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import './styles/main.scss';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Layout, RequireAuth } from './layout';
+import './styles/main.scss';
+import { Loader } from './ui';
 import {
     About,
+    Analytics,
     CreateShortLink,
     CreatNew,
-    Analytics,
     Help,
     Home,
+    LandingView,
     Redirect,
     Setting,
     ShortLink,
     UserStart,
     Wrapper,
 } from './view';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Test from './view/Test';
-import { Loader } from './ui';
 
 const App = () => {
     return (
@@ -32,14 +32,14 @@ const RouteApp = () => {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path='/' element={<LandingView />}/>
                 <Route path="/get-start" element={<UserStart />} />
                 <Route path="/:shortUrl" element={<Redirect />} />
-                <Route path="/test" element={<Test />} />
 
                 {/* protected route */}
                 <Route element={<Layout />}>
                     <Route element={<RequireAuth />}>
-                        <Route path="/" element={<Home />} />
+                        <Route path="/home" element={<Home />} />
                         <Route path="/p/:projectId" element={<Analytics />} />
                         <Route path="/create-new" element={<CreatNew />} />
                         <Route path="/sl" element={<ShortLink />} />

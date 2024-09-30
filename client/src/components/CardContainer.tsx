@@ -352,7 +352,7 @@ export const CardContainer = (props: CardContainerProps) => {
                         label="Delete"
                         Icon={FaRegTrashAlt}
                         styles={{
-                            background: '#D72D39',
+                            background: 'orange',
                         }}
                         onClick={() => setIsDeleteModalOpen(true)}
                     />

@@ -59,7 +59,7 @@ const Register = () => {
 
             dispatch(setUser(loginResponse?.userDetails));
 
-            navigate('/', { replace: true });
+            navigate('/home', { replace: true });
 
             toast.success('Register successfully', {
                 autoClose: 1000,

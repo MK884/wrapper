@@ -123,6 +123,9 @@ const Wrapper = () => {
 
     return (
         <div className={styles['main']}>
+            <div className={styles['notification']}>
+                <p>This Page is Under development</p>
+            </div>
             <div className={styles['profile']}>
                 {avatar ? (
                     <div className={styles['avatar_profile']}>

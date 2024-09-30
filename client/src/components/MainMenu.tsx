@@ -14,7 +14,7 @@ const MainMenuData = [
     {
         label: 'Home',
         icon: MdOutlineDashboardCustomize,
-        path: '/',
+        path: '/home',
     },
     {
         label: 'Create New',
@@ -26,16 +26,16 @@ const MainMenuData = [
         icon: VscGitPullRequestCreate,
         path: '/sl',
     },
-    {
-        label: 'Help',
-        icon: IoMdHelpCircleOutline,
-        path: '/help',
-    },
-    {
-        label: 'About',
-        icon: MdOutlineRoundaboutRight,
-        path: '/about',
-    },
+    // {
+    //     label: 'Help',
+    //     icon: IoMdHelpCircleOutline,
+    //     path: '/help',
+    // },
+    // {
+    //     label: 'About',
+    //     icon: MdOutlineRoundaboutRight,
+    //     path: '/about',
+    // },
 ];
 
 const MainMenu = () => {

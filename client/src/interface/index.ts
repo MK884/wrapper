@@ -1,4 +1,4 @@
-import { Dispatch, MouseEventHandler, SetStateAction } from 'react';
+import { Dispatch } from 'react';
 import { IconType } from 'react-icons';
 
 export interface SwitchProps {

@@ -45,7 +45,7 @@ const Home = () => {
 
     return (
         <div className={style['home']}>
-            {user && <h1>Welcome {user?.fullName}</h1>}
+            {/* {user && <h1>Welcome {user?.fullName}</h1>} */}
             <div className={style['performance']}>
                 <div className={style['top-project']}>
                     <h6>Top projects</h6>

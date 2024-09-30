@@ -32,8 +32,8 @@ const ShortLink = () => {
                     page: activePage,
                 });
                 setAllLinks(response?.data?.response);
-                const total = Math.round((response?.data?.total) / 8)
-                 
+                const total = Math.ceil((response?.data?.total) / 8)
+                
                 setTotalPage(total);
             } catch (error) {
                 console.error(error);

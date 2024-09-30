@@ -11,6 +11,15 @@
 
 
 .main{
+    .notification{
+        width: 100%;
+        background: var(--background-warning-weak);
+        position: fixed;
+        padding: 1rem 2rem;
+        top: 3rem;
+        left: 0;
+        color: orange;
+    }
     display:flex;
     justify-content: space-between;
     height: 100%;

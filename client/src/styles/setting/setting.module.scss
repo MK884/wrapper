@@ -25,11 +25,11 @@
         overflow-y: auto;
         overflow-x: hidden;
         h4{
-            font-size: 1.2vmax;
+            font-size: 1.2rem;
         }
         >p{
             text-align: center;
-            font-size: 1.5vmax;
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--text-defualt);
         }
@@ -48,7 +48,7 @@
             }
             p {
                 color: var(--text-placeholder);
-                font-size: .8vmax;
+                font-size: .8rem;
             }
         }
     }
@@ -62,7 +62,7 @@
     gap: 1rem;
     width: auto;
     h4{
-        font-size: 1.2vmax;
+        font-size: 1.2rem;
     }
     .header{
         display: flex;
@@ -84,7 +84,7 @@
         background-color:  var(--page-default);
         user-select: all;
         p{
-            font-size: 1vmax;
+            font-size: 1rem;
         }
     }
     .content{
@@ -94,13 +94,13 @@
         gap: 1rem;
         align-items: center;
         span{
-            font-size: 1vmax;
+            font-size: 1rem;
         }
         p{
             width: 300px;
             margin: 0 1rem;
             text-align: center;
-            font-size: .8vmax;
+            font-size: .8rem;
         }
     }
 }

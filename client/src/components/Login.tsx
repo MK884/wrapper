@@ -22,7 +22,7 @@ const Login = () => {
     const location = useLocation();
     const dispatch = useAppDispatch();
 
-    const redirect_url = location?.state?.from?.pathname ?? '/';
+    const redirect_url = location?.state?.from?.pathname ?? '/home';
 
     const {
         register,

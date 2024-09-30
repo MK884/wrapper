@@ -9,6 +9,7 @@ import UserStart from "./UserStart";
 import ShortLink from "./ShortLink";
 import Analytics from "./Analytics";
 import Wrapper from "./Wrapper";
+import LandingView from "./LandingView";
 
 export {
     About,
@@ -21,5 +22,6 @@ export {
     Setting,
     Analytics,
     Wrapper,
-    ShortLink
+    ShortLink,
+    LandingView,
 }

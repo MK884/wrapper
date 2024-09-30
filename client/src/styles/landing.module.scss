@@ -1,0 +1,172 @@
+@import './colors';
+
+.main {
+    width: 100%;
+    height: auto;
+    background: #121212;
+    overflow-x: hidden;
+    header {
+        width: 100dvw;
+        z-index: 999;
+        position: fixed;
+        background: transparent;
+        backdrop-filter: blur(10px);
+        nav {
+            width: 100%;
+            padding: 1rem 8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .site-title {
+                text-transform: uppercase;
+                font-size: 2rem;
+                font-weight: 800;
+                color: #dadada;
+            }
+            button {
+                border: none;
+                padding: 10px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                cursor: pointer;
+                transition: border hover 0.2s linear;
+                border-radius: 12px;
+                font-size: default;
+                font-weight: 600;
+                color: #dadada;
+                background-color: #4a6dd9;
+
+                &:active {
+                    border: 1.5px solid #646cff;
+                }
+
+                &:hover {
+                    filter: brightness(118%);
+                }
+            }
+        }
+    }
+    section {
+        width: 100dvw;
+        padding-inline: 1rem;
+    }
+    .section_1 {
+        height: 98dvh;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        color: #f0f8ff;
+        text-align: center;
+        &::after,
+        &::before {
+            content: '';
+            position: absolute;
+            top: 30%;
+            height: 314px;
+            width: 675px;
+            filter: blur(400px);
+            opacity: 0.15;
+            z-index: -1;
+        }
+        &::before {
+            right: 50%;
+            background-color: #6f00ff86;
+        }
+        &::after {
+            left: 50%;
+            background-color: #ff00c88c;
+        }
+        h1 {
+            font-weight: 800;
+            font-size: 4rem;
+            text-transform: uppercase;
+        }
+        p {
+            max-width: 25%;
+            font-weight: 200;
+            font-size: 18px;
+            color: #948b8b;
+        }
+        button {
+            border: 1px solid #2b3036;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: border hover 0.2s linear;
+            border-radius: 12px;
+            font-size: default;
+            font-weight: 600;
+            color: #dadada;
+            background-color: #121212;
+
+            &:active {
+                border: 1.5px solid #646cff;
+            }
+
+            &:hover {
+                border: 1.5px solid #646cff;
+                filter: brightness(118%);
+            }
+        }
+    }
+    .section_2, .section_3, .section_4, .section_5 {
+        height: 60dvh;
+        width: 100%;
+        padding-inline: 1rem;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .section_3, .section_5{
+        .wrapper{
+
+            flex-direction: row-reverse;
+        }
+    }
+    .wrapper {
+        width: 75%;
+        justify-content: space-between;
+        display: flex;
+        .text {
+            text-align: left;
+            width: 25%;
+            h3 {
+                text-transform: capitalize;
+                font-size: 30px;
+                font-weight: 600;
+                color: #f0f8ff;
+                margin-bottom: 1rem;
+            }
+            p {
+                color: #9ba3b4;
+
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 160%;
+            }
+        }
+    }
+    .image {
+        width: 45dvw;
+        height: fit-content;
+        overflow: hidden;
+        border: 1px solid #2b3036;
+        border-radius: 20px;
+        mask-image: linear-gradient(rgb(0, 0, 0, 1), rgb(0, 0, 0, 0.2));
+
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
+    }
+}
