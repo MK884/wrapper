@@ -264,15 +264,15 @@ export const showcaseData = [
         id: 1,
         titel: 'Customized link preview',
         description:
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae accusantium rerum mollitia dicta nesciunt nihil neque nostrum perspiciatis voluptates dolorum, suscipit  eum nobis fugiat aspernatur maiores? Esse vero odit dicta?',
+            "Make your links more shareable with dynamic titles. Customize the preview title, thumbnail and much more for each link to match the context in which it's shared, ensuring that your links are always relevant and compelling, no matter where they appear.",
         imgSrc: './ss4.png',
         alt: 'link preview',
     },
     {
         id: 2,
-        titel: 'Better Analysis',
+        titel: 'Detailed Click Analytics',
         description:
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae accusantium rerum mollitia dicta nesciunt nihil neque nostrum perspiciatis voluptates dolorum, suscipit  eum nobis fugiat aspernatur maiores? Esse vero odit dicta?',
+            "Gain deeper insights into how your short links are performing with detailed click analytics. Track total clicks, locations, and the exact time of each interaction. This data helps you understand the popularity of your links and the engagement trends across different platforms.",
         imgSrc: './ss2.png',
         alt: 'analysis',
     },
@@ -280,7 +280,7 @@ export const showcaseData = [
         id: 3,
         titel: 'Dashboard',
         description:
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae accusantium rerum mollitia dicta nesciunt nihil neque nostrum perspiciatis voluptates dolorum, suscipit  eum nobis fugiat aspernatur maiores? Esse vero odit dicta?',
+            `Manage all your shortened links from one intuitive dashboard. View, Share, QR code, edit, and organize your links in a clean, easy-to-navigate interface. Access key metrics at a glance to quickly assess the performance of each link. Highlight your most popular links with a "Top Performing" section.`,
         imgSrc: './ss1.png',
         alt: 'dashboard',
     },
@@ -288,7 +288,7 @@ export const showcaseData = [
         id: 4,
         titel: 'All your links at one place',
         description:
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae accusantium rerum mollitia dicta nesciunt nihil neque nostrum perspiciatis voluptates dolorum, suscipit  eum nobis fugiat aspernatur maiores? Esse vero odit dicta?',
+            "Access all your shortened links in one central location. Easily browse, search, and filter through your entire collection, making it simple to manage links from multiple campaigns or projects in a single view.",
         imgSrc: './ss3.png',
         alt: 'links',
     },
