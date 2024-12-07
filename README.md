@@ -14,6 +14,7 @@ Welcome to **Wrapper**, a full-stack application that allows users to create, ma
 -   Update and customize link thumbnails, titles, and descriptions.
 -   Manage all your links in one place.
 -   Share links via QR Code.
+-   Dark and light mode.
 
 ### 📊 **Analytics Dashboard**
 
@@ -35,6 +36,7 @@ Welcome to **Wrapper**, a full-stack application that allows users to create, ma
 | **Backend**   | Express, Node.js        |
 | **Database**  | MongoDB                 |
 | **APIs Used** | ipinfo API              |
+| **Charts**    | Apex Charts             |
 
 ---
 
